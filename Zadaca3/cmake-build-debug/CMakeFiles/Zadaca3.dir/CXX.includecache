@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/elvircrn/Documents/codes2/DM/Zadaca3/main.cpp
+iostream
+-
+cstdio
+-
+cstdlib
+-
+algorithm
+-
+vector
+-
+string
+-
+cstring
+-
+cmath
+-
+
