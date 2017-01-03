@@ -1,4 +1,13 @@
 #include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout << "Hello world!" << endl;
+    return 0;
+}
+#include <iostream>
 #include <cstdio>
 #include <cctype>
 #include <cstdlib>
@@ -203,9 +212,9 @@ public:
     void DrawGraph(const std::string &name) const
     {
         std::cout << name << "_V = ";
-        DrawVertices(vertices); 
+        DrawVertices(vertices);
         std::cout << '\n';
-        std::cout << name << "_E = "; 
+        std::cout << name << "_E = ";
         DrawEdges(edges);
     }
 
@@ -225,10 +234,11 @@ public:
             for (auto& y : vertices)
             {
                 mat.back().push_back(
-                    (dist[x][y] == std::numeric_limits<int>::max()) ? "-" : dist[x][y]);
+                    (dist[x][y] == std::numeric_limits<int>::max()) ? "-" :
+                                    patch::ToString(dist[x][y]));
             }
         }
-        
+
         DrawTable<T>(
                 std::vector<T>(vertices.begin(), vertices.end()),
                 std::vector<T>(vertices.begin(), vertices.end()),
@@ -274,7 +284,7 @@ public:
             s.erase(s.begin());
 
             rowNames.push_back("Trenutni cvor: " + help);
-            
+
             mat.push_back(std::vector<std::string>());
 
             for (auto& next : g[help])
@@ -305,7 +315,7 @@ public:
         for (auto& x : v)
             for (auto& y : v)
                 d[x][y] = std::numeric_limits<int>::max();
-        
+
         for (auto& x : v)
         {
             d[x][x] = 0;
@@ -331,7 +341,7 @@ public:
                 }
             }
         }
-       
+
         for (auto& x : v)
         {
             mat.push_back(std::vector<T>());
@@ -402,7 +412,7 @@ int main()
     std::cout << '\n';
 
     g.DrawGraphTable();
-    
+
     (DijkstraSolver<std::string>(g)).Draw("");
 
     return 0;

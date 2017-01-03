@@ -120,6 +120,27 @@ public:
 };
 
 template<class T>
+void DrawVertices(const std::set<T> &s)
+{
+    std::cout << "\\{ ";
+    DrawVector(std::vector<T>(s.begin(), s.end()), ", ");
+    std::cout << "\\}";
+}
+
+template<class T>
+void DrawEdges(const std::vector<Edge<T>> &s, const std::string &name = "")
+{
+    if (name != "")
+        std::cout << name << " = ";
+    std::cout << " \\{ ";
+    std::cout << s[0].ToString();
+    for (size_t i = 1; i < s.size(); i++)
+        std::cout << ", " << s[i].ToString();
+    std::cout << " \\}";
+}
+
+
+template<class T>
 class Graph
 {
     std::map<T, std::vector<Edge<T>>> g;
@@ -178,27 +199,46 @@ public:
     {
         return (int)edges.size();
     }
+
+    void DrawGraph(const std::string &name) const
+    {
+        std::cout << name << "_V = ";
+        DrawVertices(vertices); 
+        std::cout << '\n';
+        std::cout << name << "_E = "; 
+        DrawEdges(edges);
+    }
+
+    void DrawGraphTable() const
+    {
+        std::map<T, std::map<T, int>> dist;
+        std::vector<std::vector<std::string>> mat;
+        for (auto& x : vertices)
+            for (auto& y : vertices)
+                dist[x][y] = std::numeric_limits<int>::max();
+        for (auto& e : edges)
+            dist[e.u][e.v] = e.w;
+
+        for (auto& x : vertices)
+        {
+            mat.push_back(std::vector<std::string>());
+            for (auto& y : vertices)
+            {
+                mat.back().push_back(
+                    (dist[x][y] == std::numeric_limits<int>::max()) ? "-" : 
+                                    patch::ToString(dist[x][y]));
+            }
+        }
+        
+        DrawTable<T>(
+                std::vector<T>(vertices.begin(), vertices.end()),
+                std::vector<T>(vertices.begin(), vertices.end()),
+                mat,
+                ""
+                );
+    }
 };
 
-template<class T>
-void DrawVertices(const std::set<T> &s)
-{
-    std::cout << "\\{ ";
-    DrawVector(std::vector<T>(s.begin(), s.end()), ", ");
-    std::cout << "\\}";
-}
-
-template<class T>
-void DrawEdges(const std::vector<Edge<T>> &s, const std::string &name = "")
-{
-    if (name != "")
-        std::cout << name << " = ";
-    std::cout << " \\{ ";
-    std::cout << s[0].ToString();
-    for (size_t i = 1; i < s.size(); i++)
-        std::cout << ", " << s[i].ToString();
-    std::cout << " \\}";
-}
 
 template<class T>
 class DijkstraSolver
@@ -214,7 +254,7 @@ private:
     std::vector<std::string> rowNames;
 
 public:
-    DijkstraSolver(const Graph<T> &_g, T start, bool ex) : g(_g)
+    DijkstraSolver(const Graph<T> &_g, T start) : g(_g)
     {
         mat.push_back(std::vector<std::string>());
         for (int i = 0; i < g.V(); i++)
@@ -256,18 +296,65 @@ public:
         }
     }
 
+    DijkstraSolver(const Graph<T> &_g) : g(_g)
+    {
+        auto v = g.GetVertices();
+        auto e = g.GetEdges();
+
+        std::map<T, std::map<T, int>> d;
+
+        for (auto& x : v)
+            for (auto& y : v)
+                d[x][y] = std::numeric_limits<int>::max();
+        
+        for (auto& x : v)
+        {
+            d[x][x] = 0;
+        }
+
+        for (auto& start : v)
+        {
+            s.insert({ 0, start });
+            while (!s.empty())
+            {
+                auto help = s.begin()->second;
+                s.erase(s.begin());
+
+                for (auto& next : g[help])
+                {
+                    if (d[start][next.v] > d[start][help] + next.w)
+                    {
+                        s.erase({ d[start][next.v], next.v });
+                        d[start][next.v] = next.w + d[start][help];
+                        d[next.v][start] = d[start][next.v];
+                        s.insert({ next.w + d[start][help], next.v });
+                    }
+                }
+            }
+        }
+       
+        for (auto& x : v)
+        {
+            mat.push_back(std::vector<T>());
+            rowNames.push_back(x);
+            for (auto& y : v)
+                mat.back().push_back(patch::ToString(d[x][y]));
+        }
+    }
+
+
     std::map<T, int> GetD() const
     {
         return d;
     }
 
-    DijkstraSolver<T> Draw()
+    DijkstraSolver<T> Draw(const std::string &topLeft)
     {
         auto v = g.GetVertices();
         DrawTable<T>(std::vector<T>(v.begin(), v.end()),
-                     rowNames,
-                     mat,
-                     "Iteracija");
+                rowNames,
+                mat,
+                topLeft);
         std::cout << "\n\n";
         return (*this);
     }
@@ -278,7 +365,7 @@ int main()
     freopen("treci.txt", "r", stdin);
     int u, v, w;
     Graph<std::string> g;
-    
+
     std::vector<std::string> vnames;
 
     while (isalpha(std::cin.peek()))
@@ -312,8 +399,12 @@ int main()
                 g.AddEdgeDir(vnames[i], y, patch::ToInt(buff));
         }
     }
+
+    std::cout << '\n';
+
+    g.DrawGraphTable();
     
-    (DijkstraSolver<std::string>(g, vnames[0], false)).Draw();
+    (DijkstraSolver<std::string>(g)).Draw("");
 
     return 0;
 }
