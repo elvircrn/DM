@@ -20,14 +20,14 @@ namespace patch
 }
 
 template<class T>
-std::vector<std::pair<T, double>> getProb(const std::vector<std::pair<T, int>> &in)
+std::vector<std::pair<double, T>> getProb(const std::vector<std::pair<T, int>> &in)
 {
-    std::vector<std::pair<T, double>> v;
+    std::vector<std::pair<double, T>> v;
     int total = 0;
     for (auto &x : in)
         total += x.second;
     for (auto &x : in)
-        v.emplace_back(x.first, (double)x.second / total);
+        v.emplace_back((double)x.second / total, x.first);
     return v;
 }
 
@@ -95,88 +95,23 @@ void solve(int left, int right, const std::vector<double> &prefix,
     depth--;
 }
 
-template<class T>
-std::map<T, std::string> shannonFano(std::vector<std::pair<T, double>> p)
-{
-    std::map<T, std::string> res;
-    std::sort(p.begin(), p.end(), [](std::pair<T, double> &a, std::pair<T, double> &b) -> bool { return a.second > b.second; });
-
-    double total = 1.0;
-
-    typedef std::pair<double, std::vector<T>> Data;
-    std::set<T> charSet;
-
-    std::priority_queue<Data, std::vector<Data>, bool (*)(const Data &a, const Data &b)> q ([](const Data &a, const Data &b) -> bool { return a.first > b.first; });
-    
-    for (auto& x : p)
-    {
-        q.push(Data(x.second, { x.first }));
-        charSet.insert(x.first);
-    }
-
-    while (!q.empty())
-    {
-        double cnt = 0.0;
-        double totalCpy = total;
-
-        std::vector<T> s;
-        
-        while (!q.empty() && 2 * cnt < totalCpy)
-        {
-            Data d = q.top();
-            q.pop();
-
-            for (auto& c : d.second)
-            {
-                std::cout << c << ' ';
-                res[c] += '0';
-                charSet.erase(charSet.find(c));
-            }
-
-            std::putchar('\n');
-
-            total -= d.first;
-            cnt += d.first;
-        }
-
-        for (auto& c : charSet)
-            res[c] += '1';
-    }
-
-    return res;
-}
-
-template<class T>
-std::map<T, std::string> getShannonFano(const std::vector<std::pair<T, int>> &p)
-{
-    return shannonFano<T>(getProb<T>(p));
-}
-
 int main()
 {
-    /*
     std::vector<int> v = { 36, 85, 28, 51, 71, 76, 91, 82, 29, 30 };
-    std::vector<std::pair<char, int>> p;
-
+    std::vector<std::pair<std::string, int>> p;
+    std::string word = "A";
     for (int i = 0; i < v.size(); i++)
-        p.push_back(std::make_pair('A' + i, v[i]));
-
-    auto m = getShannonFano<char>(p);
-
-    for (auto& x : m)
-        std::cout << x.first << ' ' << x.second << '\n';
-    */
-
-    std::vector<std::pair<double, std::string>> data;
-
-    std::vector<double> p = { 0.7, 0.2, 0.1 };
-    for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 3; j++)
-        {
-            data.emplace_back(p[i] * p[j], "x_" + patch::to_string(i + 1) + "x_" + patch::to_string(j + 1));
-        }
+        p.emplace_back(word, v[i]);
+        word[0]++;
     }
+    std::vector<std::pair<double, std::string>> data = getProb<std::string>(p);
+
+    std::cout << "\\{ ";
+    for (auto& elem : data)
+        std::cout << "(" << elem.second << ", " << elem.first << "), ";
+    std::cout << '\n';
+
 
     std::sort(data.begin(), data.end());
 
@@ -192,6 +127,11 @@ int main()
     std::map<std::string, std::string> m;
 
     solve<std::string>(0, (int)data.size() - 1, prefix, m, data);
+    
+    std::cout << "\n\n";
+    for (auto& elem : m)
+        std::cout << elem.first << " &\\rightarrow " << elem.second << "\\\\\n";
+    std::cout << "\n\n";
 
     for (int i = 0; i < data.size(); i++)
         std::cout << data[i].first << ' ' << data[i].second << '\n';
@@ -206,15 +146,23 @@ int main()
     double nsr = 0.0, hinf = 0.0;
     for (auto& d : data)
     {
-        nsr += d.first * d.second.length();
+        nsr += d.first * m[d.second].length();
         hinf -= d.first * std::log2(d.first);
     }
 
     std::cout << "nsr = " << nsr << '\n';
     std::cout << "hinf = " << hinf << '\n';
     std::cout << "brzina prenosa = " << hinf / nsr << '\n';
-    std::cout << "brzina prenosa = " << (hinf / nsr) * 100.0 << "%\n";
+    std::cout << "procenat iskoristnosti = " << (hinf / nsr) * 100.0 << "%\n";
 
+    std::string text = "FCJJCGHAFAEI";
+    for (char c : text)
+    {
+        std::string s; s += c;
+        std::cout << m[s];
+    }
+    std::cout << '\n';
+ 
     return 0;
 }
 

@@ -47,6 +47,8 @@ private:
 
     Node root;
 
+    int codeSize;
+
     std::unordered_map<T, std::string> huffman;
 
     int TakeCount(int n) const
@@ -167,7 +169,7 @@ private:
        {
            huffman[current.first] = buffer;
            if (write)
-               std::cout << current.first << "$\\rightarrow$ " << buffer << '\n';
+               std::cout << current.first << ' ' << buffer << '\n';
        }
     }
 
@@ -197,8 +199,19 @@ public:
         Traverse(root, "", 0, write);
     }
 
-    void Analyse()
+    std::string Encode(std::string text)
     {
+        std::string ret;
+        for (char c : text)
+            ret += huffman[std::string(1, c)];
+        return ret;
+    }
+
+    void Analyze()
+    {
+        for (auto& elem : huffman)
+            std::cout << elem.first << " &\\rightarrow " << elem.second << "\\\\\n";
+
         std::unordered_map<T, int> n;
 
         for (auto &e : huffman)
@@ -206,7 +219,10 @@ public:
 
         double nsr = 0.0;
         for (auto &e : huffman)
+        {
+            std::cout << e.first << ' ' << prob[e.first] << ' ' << n[e.first] << '\n';
             nsr += prob[e.first] * n[e.first];
+        }
 
         std::cout << "nsr = " << nsr << '\n';
 
@@ -216,24 +232,32 @@ public:
 
         std::cout << "hinf = " << hinf << '\n';
 
-        std::cout << "brzina prenosa = " << hinf / nsr << '\n';
+        double speed = hinf / nsr;
 
-        std::cout << "procenat iskoristenosti = " << (hinf / nsr) * 100.0 << "%\n";
+        std::cout << "brzina prenosa = " << speed << '\n';
+
+        double perc = speed / std::log2((int)codes.size());
+
+        std::cout << "procenat iskoristenosti = " << perc * 100.0 << "%\n";
     }
+
 };
 
 int main()
 {
-    HuffmanTree<std::string> test ({{ "x3", 0.25 },
-                                    { "x6", 0.25 },
-                                    { "x1", 0.2 },
-                                    { "x5", 0.15 },
-                                    { "x4", 0.1 },
-                                    { "x2", 0.05 }
-                                    }, { '0', '1' });
-
-    test.Join(true);
-    test.Analyse();
+    // Zadatak 5 b)
+    std::vector<int> v = { 36, 85, 28, 51, 71, 76, 91, 82, 29, 30 };
+    std::vector<std::pair<std::string, int>> p;
+    std::string word = "A";
+    for (int i = 0; i < v.size(); i++)
+    {
+        p.emplace_back(word, v[i]);
+        word[0]++;
+    }
+    HuffmanTree<std::string> huffman (HuffmanTree<std::string>::GetProb(p), { '0', '1', '2' });
+    huffman.Join(true);
+    huffman.Analzse();
+    std::cout << huffman.Encode("GCCAIAHJJCIC") << '\n';
 
     return 0;
 }

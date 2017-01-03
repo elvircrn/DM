@@ -1,0 +1,467 @@
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <algorithm>
+#include <set>
+#include <map>
+#include <set>
+#include <vector>
+#include <limits>
+#include <sstream>
+
+void begin(std::string s)
+{
+    std::cout << "\\begin{" << s << "}";
+}
+
+void end(std::string s)
+{
+    std::cout << "\\end{" << s << "}";
+}
+
+template<class T>
+void DrawVector(const std::vector<T> &v, std::string sep = "")
+{
+    std::cout << v[0];
+    for (size_t i = 1; i < v.size(); i++)
+        std::cout << sep << v[i];
+}
+
+namespace patch
+{
+    template<class T>
+    std::string ToString(const T &x)
+    {
+        std::stringstream ss;
+        ss << x;
+        return ss.str();
+    }
+}
+
+std::vector<std::string> GenIt(int n)
+{
+    std::vector<std::string> ret;
+    for (int i = 1; i <= n; i++)
+        ret.push_back("Iteration " + patch::ToString(i));
+    return ret;
+}
+
+
+template<class T>
+void DrawTable(const std::vector<std::string> &columnNames,
+               const std::vector<std::string> &rowNames,
+               const std::vector<std::vector<T>> &mat,
+               const std::string &topLeft)
+{
+    putchar('\n');
+    putchar('\n');
+
+    begin("tabular");
+    std::cout << "{ | c || c ";
+    for (size_t i = 1; i < columnNames.size(); i++)
+        std::cout << " | c";
+    std::cout << " | } \n";
+
+    std::cout << "\\hline\n";
+    // Draws the column names
+    std::cout << topLeft << " & ";
+    DrawVector(columnNames, " & ");
+    std::cout << "\\\\\n \\hline\n \\hline \n";
+
+    for (int i = 0; i < mat.size(); i++)
+    {
+        if (i < rowNames.size())
+            std::cout << rowNames[i] << " & ";
+        else
+            std::cout << "Iteracija " << i + 1 << " & ";
+
+        DrawVector(mat[i], " & ");
+        std::cout << "\\\\\n \\hline\n";
+    }
+    end("tabular");
+}
+
+template<class T>
+class Edge
+{
+public:
+    T u, v;
+    int w;
+
+    Edge() { }
+    Edge(const T &_v, int _w) : v(_v), w(_w) { }
+    Edge(const T &_u, const T &_v, int _w) : u(_u), v(_v), w(_w) { }
+
+    bool operator< (const Edge &e) const
+    {
+        if (w != e.w)
+            return w > e.w;
+        else if (u != e.u)
+            return u < e.u;
+        else
+            return v < e.v;
+    }
+
+    std::string ToString() const
+    {
+        std::stringstream ss;
+        ss << "(" << u << ", " << v << ", " << w << ")";
+        return ss.str();
+    }
+};
+
+template<class T>
+class Graph
+{
+    std::map<T, std::vector<Edge<T>>> g;
+    std::set<T> vertices;
+    std::vector<Edge<T>> edges;
+public:
+
+    std::vector<Edge<T>>& operator[](const T &u)
+    {
+        return g[u];
+    }
+
+    std::vector<Edge<T>> operator[](const T &u) const
+    {
+        return g[u];
+    }
+
+    void AddEdgeDir(const T &u, const T &v, int w)
+    {
+        edges.emplace_back(u, v, w);
+        g[u].emplace_back(u, v, w);
+        vertices.insert(u);
+        vertices.insert(v);
+    }
+
+    void AddEdge(const T &u, const T &v, int w)
+    {
+        AddEdgeDir(u, v, w);
+        AddEdgeDir(v, u, w);
+    }
+
+    std::vector<Edge<T>> GetEdges(bool filter = false) const
+    {
+        if (!filter)
+            return edges;
+        else
+        {
+            std::vector<Edge<T>> v;
+            for (int i = 0; i < edges.size(); i += 2)
+                v.push_back(edges[i]);
+            return v;
+        }
+    }
+
+    std::set<T> GetVertices() const
+    {
+        return vertices;
+    }
+
+    int V() const
+    {
+        return (int)vertices.size();
+    }
+
+    int E() const
+    {
+        return (int)edges.size();
+    }
+};
+
+template<class T>
+void DrawVertices(const std::set<T> &s)
+{
+    std::cout << "\\{ ";
+    DrawVector(std::vector<T>(s.begin(), s.end()), ", ");
+    std::cout << "\\}";
+}
+
+template<class T>
+void DrawEdges(const std::vector<Edge<T>> &s, const std::string &name = "")
+{
+    if (name != "")
+        std::cout << name << " = ";
+    std::cout << " \\{ ";
+    std::cout << s[0].ToString();
+    for (size_t i = 1; i < s.size(); i++)
+        std::cout << ", " << s[i].ToString();
+    std::cout << " \\}";
+}
+
+template<class T>
+class KruskalSolver
+{
+    std::map<T, T> parent;
+    std::map<T, int> count;
+    Graph<T> g;
+
+    T Find(const T& x)
+    {
+        if (parent[x] == x)
+            return x;
+        else
+            return parent[x] = Find(parent[x]);
+    }
+
+    bool Union(const T& x, const T& y)
+    {
+        T pX = Find(x), pY = Find(y);
+
+        if (pX != pY && count[pX] > count[pY])
+        {
+            parent[pY] = pX;
+            count[pX] += count[pY];
+            return true;
+        }
+        else if (pX != pY && count[pX] <= count[pY])
+        {
+            parent[pX] = pY;
+            count[pY] += count[pX];
+            return true;
+        }
+        return false;
+    }
+
+    std::vector<std::vector<T>> mat;
+    std::vector<std::string> rowNames;
+    Graph<T> tree;
+
+public:
+    KruskalSolver(const Graph<T> &_g, bool trackSize = false) : g(_g)
+    {
+        auto edges = g.GetEdges();
+        std::sort(edges.begin(), edges.end(),
+                  [](const Edge<T> &a, const Edge<T> &b) -> bool { return a.w < b.w; });
+
+        std::cout << edges.size() << '\n';
+
+        for (auto& v : g.GetVertices())
+        {
+            parent[v] = v;
+            count[v] = 1;
+        }
+
+        mat.push_back(std::vector<T>());
+
+        for (auto& v : g.GetVertices())
+            if (trackSize)
+                mat.back().push_back("1");
+            else
+                mat.back().push_back(Find(parent[v]));
+        rowNames.push_back("Pocetno stanje");
+
+        bool skip = 1;
+        for (auto& e : edges)
+        {
+            if (skip ^= 1)
+                continue;
+            std::string rowName = e.ToString();
+            mat.push_back(std::vector<T>());
+            if (Union(e.u, e.v))
+            {
+                tree.AddEdge(e.u, e.v, e.w);
+                rowName += " \\checkmark";
+            }
+            for (auto& v : g.GetVertices())
+            {
+                std::string log;
+                parent[v] = Find(parent[v]);
+                if (trackSize)
+                    log = patch::ToString(count[parent[v]]);
+                else
+                    log = patch::ToString(parent[v]);
+                //log = "(" + log + ", " + patch::ToString(count[parent[v]]) + ")";
+                mat.back().push_back(log);
+            }
+            rowNames.push_back(rowName);
+
+            if (g.V() - 1 == tree.E() / 2)
+                break;
+        }
+    }
+
+    KruskalSolver<T> Draw()
+    {
+        auto v = tree.GetVertices();
+        DrawTable<T>(std::vector<T>(v.begin(), v.end()),
+                     rowNames,
+                     mat,
+                     "Iteracija");
+        std::cout << "\n\n";
+        DrawEdges(tree.GetEdges(true), "T");
+        return (*this);
+    }
+
+    KruskalSolver<T> DrawSum(const std::string &s)
+    {
+        int sum = 0;
+        auto e = tree.GetEdges();
+        for (size_t i = 0; i < e.size(); i++)
+            sum += e[i].w;
+        sum /= 2;
+        std::cout << s << sum << '\n';
+        return (*this);
+    }
+};
+
+template<class T>
+class PrimSolver
+{
+private:
+    /* Dio Primovog algoritma */
+    std::map<T, int> d;
+    std::set<std::pair<int, Edge<T>>> s;
+
+    /* MST */
+    Graph<T> tree;
+    std::vector<Edge<T>> e;
+
+    Graph<T> g; // Graf nad kojim se primjenjuje
+    std::vector<std::vector<T>> mat; // Matrica koja se generise za potrebe zadace
+    std::vector<std::string> rowNames; // Prva kolona svakog reda pomenute matrice
+
+public:
+    PrimSolver(const Graph<T> &_g) : g(_g)
+    {
+        mat.push_back(std::vector<std::string>());
+        for (int i = 0; i < g.V(); i++)
+            mat.back().push_back("\\infty");
+        auto v = g.GetVertices();
+        s.insert({ 0, { *v.begin(), *v.begin(), 0 } });
+
+        std::map<T, int> d;
+        for (auto& x : v)
+            d[x] = std::numeric_limits<int>::max();
+        d[*v.begin()] = 0;
+        std::map<T, bool> visited;
+
+        rowNames.push_back("Pocetno stanje");
+
+        bool first = true;
+
+        while (!s.empty())
+        {
+            auto edge = s.begin()->second;
+            s.erase(s.begin());
+
+            if (visited[edge.v])
+                continue;
+
+            mat.push_back(std::vector<std::string>());
+
+            rowNames.push_back(edge.ToString());
+
+            visited[edge.v] = true;
+
+            if (!first)
+                tree.AddEdge(edge.u, edge.v, edge.w);
+
+
+            first = false;
+
+            for (auto& next : g[edge.v])
+            {
+                if (d[next.v] > next.w && !visited[next.v])
+                {
+                    s.erase({ d[next.v], edge });
+                    d[next.v] = next.w;
+                    s.insert({ next.w, next });
+                }
+            }
+
+            for (auto& x : v)
+                if (d[x] != std::numeric_limits<int>::max())
+                    mat.back().push_back(patch::ToString(d[x]) +
+                                        (visited[x] ? "\\checkmark" : ""));
+                else
+                    mat.back().push_back("\\infty");
+            if (g.V() - 1 == tree.E() / 2)
+                break;
+        }
+
+        DrawEdges(tree.GetEdges(true), "T");
+    }
+
+    PrimSolver<T> Draw()
+    {
+        auto v = tree.GetVertices();
+        DrawTable<T>(std::vector<T>(v.begin(), v.end()),
+                     rowNames,
+                     mat,
+                     "Iteracija");
+        std::cout << "\n\n";
+        DrawEdges(tree.GetEdges(true), "T");
+        return (*this);
+    }
+
+    PrimSolver<T> DrawSum(const std::string &s)
+    {
+        int sum = 0;
+        auto e = tree.GetEdges();
+        for (size_t i = 0; i < e.size(); i++)
+            sum += e[i].w;
+        sum /= 2;
+        std::cout << "\n\n" << s << sum << '\n';
+        return (*this);
+    }
+};
+
+int main()
+{
+    freopen("drugi.txt", "r", stdin);
+    int u, v, w;
+    Graph<std::string> g;
+    while (scanf("(L%d, L%d, %d)", &u, &v, &w) == 3)
+    {
+        std::string base = "\\(L_{";
+        g.AddEdge(base + patch::ToString(u) + "}\\)", base + patch::ToString(v) + "}\\)", w);
+        for (int i = 0; i < 3; i++)
+            getchar();
+    }
+
+    DrawVertices<std::string>(g.GetVertices());
+    std::cout << "\n\n";
+    DrawEdges(g.GetEdges(true), "G");
+    (KruskalSolver<std::string>(g)).Draw().DrawSum("\nSuma svih tezina je ");
+    (KruskalSolver<std::string>(g, true)).Draw().DrawSum("\nSuma svih tezina je ");
+    (PrimSolver<std::string>(g)).Draw().DrawSum("Suma svih tezina je ");
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

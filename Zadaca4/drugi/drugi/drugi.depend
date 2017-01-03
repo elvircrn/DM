@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1483396773 source:c:\users\elvircrn\documents\codes2\dm\zadaca4\drugi\drugi\main.cpp
+	<iostream>
+	<cstdio>
+	<cstdlib>
+	<algorithm>
+	<set>
+	<map>
+	<set>
+	<vector>
+	<limits>
+	<sstream>
+

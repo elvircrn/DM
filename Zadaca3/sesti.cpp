@@ -1,0 +1,489 @@
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <queue>
+#include <cmath>
+#include <stack>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <sstream>
+#include <unordered_map>
+#include <functional>
+#include <utility>
+
+namespace patch
+{
+    template<class T> std::string to_string(const T &n)
+    {
+        std::ostringstream stm;
+        stm << n;
+        return stm.str();
+    }
+}
+
+template<class T>
+class HuffmanTree
+{
+private:
+    typedef std::pair<T, int> Node;
+    typedef std::pair<double, T> Data;
+
+    struct Edge
+    {
+        T v;
+        char c;
+
+        Edge() { }
+        Edge(const Node &_v, char _c) : v(_v), c(_c) { }
+    };
+
+
+    std::unordered_map<T, T> parent;
+    std::unordered_map<T, double> prob;
+    std::map<Node, std::vector<Node>> graph;
+    std::vector<char> codes;
+    std::unordered_map<T, int> groupSize;
+    std::vector<std::pair<T, double>> dataSet;
+
+    Node root;
+
+    int codeSize;
+
+    std::unordered_map<T, std::string> huffman;
+
+    int TakeCount(int n) const
+    {
+        return 2 + ((n - 4) % (codes.size() - 1));
+    }
+
+    void InitValues(const std::vector<std::pair<T, double>> &dataSet)
+    {
+        for (auto& x : dataSet)
+        {
+            prob[x.first] = x.second;
+            parent[x.first] = x.first;
+            groupSize[x.first] = 1;
+        }
+    }
+
+    T Find(const T &x)
+    {
+        if (parent[x] == x)
+            return x;
+        else
+            return parent[x] = Find(parent[x]);
+    }
+
+    Node FindNode(const T &x)
+    {
+        return Node(x, groupSize[x]);
+    }
+
+    Node Union(const T &x, const T &y)
+    {
+        T fX = Find(x);
+        T fY = Find(y);
+
+        if (groupSize[fX] < groupSize[fY])
+        {
+            groupSize[fY] += groupSize[fX];
+            parent [fX] = fY;
+            return Node(fY, groupSize[fY]);
+        }
+        else
+        {
+            groupSize[fX] += groupSize[fY];
+            parent [fY] = fX;
+            return Node(fX, groupSize[fX]);
+        }
+    }
+
+    void Huffman()
+    {
+        std::priority_queue<Data,
+                            std::vector<Data>,
+                            std::function<bool(const Data &a, const Data &b)>> pq (
+                                    [](const Data &a, const Data &b) -> bool
+                                    {
+                                        return a.first > b.first;
+                                    });
+
+        for (auto& x : prob)
+            pq.push(Data(x.second, x.first));
+
+        Node node;
+        while (pq.size() > 1)
+        {
+            int m = TakeCount((int)pq.size());
+
+            auto mainElem = pq.top();
+            pq.pop();
+
+            Node lastNode = FindNode(mainElem.second);
+
+            double count = mainElem.first;
+            std::vector<Node> nodes(m - 1); // TODO: Optimize
+
+            for (int i = 0; i < m - 1; i++)
+            {
+                auto help = pq.top();
+                pq.pop();
+                count += help.first;
+
+                nodes [i] = FindNode(help.second);
+                node = Union(help.second, mainElem.second);
+            }
+
+            nodes.push_back(lastNode);
+
+            for (Node& n : nodes)
+                graph[node].push_back(n);
+
+
+            pq.push(Data(count, node.first));
+        }
+
+        root = node;
+    }
+
+    void Traverse(const Node &current, std::string buffer, int depth = 0, bool write = false)
+    {
+        depth++;
+
+        if (write)
+            for (int i = 0; i < depth; i++)
+                std::putchar('-');
+
+        if (graph[current].size() && write)
+        {
+            for (int i = 0; i < graph[current].size() - 1; i++)
+                std::cout << prob[graph[current][i].first] << " + ";
+            std::cout << prob[graph[current].back().first] << '\n';
+        }
+        
+        int index = 0;
+        for (auto& next : graph[current])
+            Traverse(next, buffer + codes[index++], depth, write);
+
+       if (!graph[current].size())
+       {
+           huffman[current.first] = buffer;
+           if (write)
+               std::cout << current.first << ' ' << buffer << '\n';
+       }
+    }
+
+    std::vector<std::pair<T, double>> MixMe(const std::vector<std::pair<T, double>> &dS, int token)
+    {
+        if (token == 1)
+        {
+            dataSet = dS;
+            return dataSet;
+        }
+
+        auto mix = MixMe(dS, token - 1);
+        dataSet.clear();
+
+        for (int i = 0; i < dS.size(); i++)
+            for (int j = 0; j < mix.size(); j++)
+                dataSet.emplace_back(dS[i].first + mix[j].first, dS[i].second * mix[j].second);
+
+        return dataSet;
+    }
+
+public:
+    static std::vector<std::pair<T, double>> GetProb(const std::vector<std::pair<T, int>> &in)
+    {
+        std::vector<std::pair<T, double>> v;
+        int total = 0;
+        for (auto &x : in)
+            total += x.second;
+        for (auto &x : in)
+            v.emplace_back(x.first, (double)x.second / total);
+        return v;
+    }
+
+    HuffmanTree(const std::vector<std::pair<T, double>> &_dataSet,
+                const std::vector<char> &_codes,
+                int mix = 1) : codes(_codes)
+    {
+        std::cout << "asdf\n";
+        dataSet = MixMe(_dataSet, mix);
+        std::cout << "finished\n";
+        for (auto s : dataSet)
+            std::cout << s.first << ' ' << s.second << '\n';
+        std::cout << '\n';
+        InitValues(dataSet);
+        Huffman();
+    }
+
+    void Join(bool write = false)
+    {
+        if (write)
+            std::cout << ".-\n";
+        Traverse(root, "", 0, write);
+    }
+
+    std::string Encode(std::string text)
+    {
+        int len = dataSet[0].first.length();
+        std::string ret;
+        for (int i = 0; i < text.length(); i += len)
+            ret += huffman[text.substr(i, len)];
+        return ret;
+    }
+
+    void Analyze()
+    {
+        for (auto& elem : dataSet)
+            std::cout << elem.first << " &\\rightarrow " << elem.second << "\\\\\n";
+        std::cout << "\n\n";
+        for (auto& elem : huffman)
+            std::cout << elem.first << " &\\rightarrow " << elem.second << "\\\\\n";
+
+        std::unordered_map<T, int> n;
+
+        for (auto &e : huffman)
+            n[e.first] = e.second.length();
+
+        double nsr = 0.0;
+        for (auto &e : huffman)
+        {
+            std::cout << e.first << ' ' << prob[e.first] << ' ' << n[e.first] << '\n';
+            nsr += prob[e.first] * n[e.first];
+        }
+
+        std::cout << "nsr = " << nsr << '\n';
+
+        double hinf = 0.0;
+        for (auto &e : huffman)
+            hinf -= prob[e.first] * std::log2(prob[e.first]);
+
+        std::cout << "hinf = " << hinf << '\n';
+
+        double speed = hinf / nsr;
+
+        std::cout << "brzina prenosa = " << speed << '\n';
+
+        double perc = speed / std::log2((int)codes.size());
+
+        std::cout << "procenat iskoristenosti = " << perc * 100.0 << "%\n";
+    }
+};
+
+template<class T>
+class ShannonFanoTree
+{
+    std::vector<char> codes;
+    std::map<T, std::string> shannonFano;
+    std::vector<double> prefix;
+    std::map<T, double> prob;
+    std::vector<std::pair<T, double>> dataSet;
+
+    double GetSum(int left, int right)
+    {
+        return prefix[right] - (!left ? 0 : prefix[left - 1]);
+    }
+
+    int FindIndex(int left, int right)
+    {
+        if (right - left < 3)
+            return left;
+
+        double total = GetSum(left, right);
+
+        int l = left, r = right, pivot;
+
+        while (l < r)
+        {
+            pivot = (l + r) / 2;
+            if (GetSum(left, pivot) * 2 < total)
+                l = pivot + 1;
+            else
+                r = pivot - 1;
+        }
+
+        return l;
+    }
+    
+    void InitValues()
+    {
+        prefix.resize(dataSet.size());
+        prefix[0] = dataSet[0].second;
+        prob[dataSet[0].first] = dataSet[0].second;
+        for (int i = 1; i < prefix.size(); i++)
+        {
+            prefix[i] = prefix[i - 1] + dataSet[i].second;
+            prob[dataSet[i].first] = dataSet[i].second;
+        }
+    }
+
+    int depth;
+
+    void Solve(int left, int right, char color = '0', bool print = false)
+    {
+        if (print)
+            for (int i = 0; i < depth; i++)
+                std::putchar('-');
+
+        depth++;
+
+        if (left == right)
+        {
+            shannonFano[dataSet[left].first] += color;
+            if (print)
+                std::cout << dataSet[left].first << '=' << shannonFano[dataSet[left].first] << '\n';
+            depth--;
+            return;
+        }
+
+        int index = FindIndex(left, right);
+
+        if (left != index)
+            for (int i = left; i <= index; i++)
+                shannonFano[dataSet[i].first] += codes[0];
+
+
+        if (right != index + 1)
+            for (int i = index + 1; i <= right; i++)
+                shannonFano[dataSet[i].first] += codes[1];
+
+        if (print)
+            std::cout << GetSum(left, index) << " + " << GetSum(index + 1, right) << '\n';
+
+        Solve(left, index, codes[0], print);
+        Solve(index + 1, right, codes[1], print);
+
+        depth--;
+    }
+
+    std::vector<std::pair<T, double>> MixMe(const std::vector<std::pair<T, double>> &dS, int token)
+    {
+        if (token == 1)
+            return dataSet = dS;
+
+        auto mix = MixMe(dS, token - 1);
+
+        dataSet.clear();
+
+        for (int i = 0; i < dS.size(); i++)
+            for (int j = 0; j < mix.size(); j++)
+                dataSet.emplace_back(dS[i].first + mix[j].first, dS[i].second * mix[j].second);
+
+        return dataSet;
+    }
+
+public:
+    ShannonFanoTree(const std::vector<std::pair<T, double>> &dS,
+                    const std::vector<char> &_codes,
+                    int mix = 1) : depth(0)
+    {
+        codes = _codes;
+
+        MixMe(dS, mix);
+
+        std::sort(dataSet.begin(), dataSet.end(), [](auto x, auto y) { return x.second > y.second; }); // C++14
+        InitValues();
+    }
+
+    void Solve(bool write)
+    {
+        Solve(0, dataSet.size() - 1, codes[0], write);
+    }
+
+    void Analyze()
+    {
+        for (auto elem : dataSet)
+            std::cout << elem.first << " &\\rightarrow " << elem.second << "\\\\\n";
+
+        for (auto& elem : shannonFano)
+            std::cout << elem.first << " &\\rightarrow " << elem.second << "\\\\\n";
+
+        double nsr = 0.0;
+        for (auto &e : shannonFano)
+            nsr += prob[e.first] * shannonFano[e.first].length();
+
+        std::cout << "nsr = " << nsr << '\n';
+
+        double hinf = 0.0;
+        for (auto &e : shannonFano)
+            hinf -= prob[e.first] * std::log2(prob[e.first]);
+
+        std::cout << "hinf = " << hinf << '\n';
+
+        double speed = hinf / nsr;
+
+        std::cout << "brzina prenosa = " << speed << '\n';
+
+        double perc = speed;
+
+        std::cout << "procenat iskoristenosti = " << perc * 100.0 << "%\n";
+    }
+
+    std::string Encode(std::string text)
+    {
+        int len = dataSet[0].first.length();
+        std::string ret;
+        for (int i = 0; i < text.length(); i += len)
+            ret += shannonFano[text.substr(i, len)];
+        return ret;
+    }
+};
+
+int main()
+{
+    std::vector<double> v = { 0.25, 0.15, 0.4, 0.2 };
+    std::vector<std::pair<std::string, double>> p;
+    for (int i = 0; i < v.size(); i++)
+        p.emplace_back(std::string(1, 'A' + i), v[i]);
+
+    /*
+    // a)
+    ShannonFanoTree<std::string> sfTreea(p, { '0', '1' }, 1);
+    sfTreea.Solve(false);
+    sfTreea.Analyze();
+    std::cout << "ADDDDDBB \\rightarrow " << sfTreea.Encode("ADDDDDBB") << '\n';
+
+    std::cout << "\n\n<--------------------------------------\n\n\n";
+    // b)
+    HuffmanTree<std::string> htb(p, { '0', '1' }, 1);
+    htb.Join(true);
+    htb.Analyze();
+    std::cout << "encoding: " << htb.Encode("ADDDDDBB") << '\n';
+    */
+
+    // c)
+    /*
+    ShannonFanoTree<std::string> htc(p, { '0', '1' }, 2);
+    htc.Solve(true);
+    htc.Analyze();
+    std::cout << "encoding: " << htc.Encode("ADDDDDBB") << '\n';
+
+    system("pause");
+    */
+
+    // d)
+    HuffmanTree<std::string> htd(p, { '0', '1' }, 2);
+    htd.Join(true);
+    htd.Analyze();
+    std::cout << "encoding: " << htd.Encode("ADDDDDBB") << '\n';
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
