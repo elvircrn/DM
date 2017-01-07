@@ -556,7 +556,7 @@ int main()
     Graph<std::string> g;
     std::map<std::string, int> indeg, outdeg;
 
-    int index = 1;
+    int index = 0;
 
     while (getchar() == '{')
     {
