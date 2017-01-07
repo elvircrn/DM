@@ -492,15 +492,24 @@ public:
         }
     }
 
-    Graph<T> Reduce()
+    Graph<T> Reduce() const
     {
         Graph<T> ret = (*this);
         for (auto& v : ret.vertices)
             if (ret.outdeg[v] == 2)
             {
                 ret.RemoveVertex(v);
-                ret.AddEdge(g[v][0].v, g[v][1].v, 1);
+                ret.AddEdge(ret.g[v][0].v, ret.g[v][1].v, 1);
             }
+        return ret;
+    }
+
+    std::vector<int> GetIndegSorted()
+    {
+        std::vector<int> ret;
+        for (auto& v : vertices)
+            ret.push_back(indeg[v]);
+        std::sort(ret.begin(), ret.end());
         return ret;
     }
 };
@@ -596,6 +605,8 @@ int main()
                 putchar('\n');
         */
         /* c */
+        /*
+        test planarnosti
         if (g.Reduce().GetK33().first.size() > 0)
         {
             std::cout << "K33 grafa " << gname << " glasi:\n";
@@ -612,7 +623,10 @@ int main()
         {
             std::cout << "K5 grafa " << gname << " glasi:\n";
             DrawVector(g.Reduce().GetK5(), ",");
-        }
+        }*/
+
+        DrawVector(g.GetIndegSorted(), ", ");
+        std::cout  << '\n';
     }
 
     return 0;
