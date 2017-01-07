@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1483799539 source:c:\users\elvircrn\documents\codes2\dm\zadaca4\prvi\prvi\main.cpp
+	<iostream>
+	<cstdio>
+	<queue>
+	<cstring>
+	<cctype>
+	<cstdlib>
+	<algorithm>
+	<set>
+	<map>
+	<set>
+	<stack>
+	<vector>
+	<limits>
+	<sstream>
+
