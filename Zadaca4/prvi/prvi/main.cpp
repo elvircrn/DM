@@ -217,6 +217,41 @@ class Graph
     std::map<T, int> indeg, outdeg;
     std::map<T, std::map<T, int>> m;
     std::map<T, std::map<T, int>> flow;
+
+
+    bool dfs(const std::vector<T> &vs,
+             std::map<T, int> &colors,
+             int index,
+             int colorSetSize = 3)
+    {
+        if (index == vs.size())
+        {
+            if (CheckColoring(colors))
+                return true;
+            else
+                return false;
+        }
+        else
+        {
+            for (int i = 1; i <= colorSetSize; i++)
+            {
+                colors[vs[index]] = i;
+                if (dfs(vs, colors, index + 1))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckColoring(std::map<T, int> colors)
+    {
+        for (auto& v : vertices)
+            for (auto& e : g[v])
+                if (colors[v] == colors[e.v])
+                    return false;
+        return true;
+    }
+
 public:
 
     void Clear()
@@ -512,6 +547,43 @@ public:
         std::sort(ret.begin(), ret.end());
         return ret;
     }
+
+    void PrintRaw()
+    {
+        std::cout << "[";
+        for (auto& x : vertices)
+        {
+            std::cout << "[";
+            for (auto& y : vertices)
+                std::cout << m[x][y] << ", ";
+            std::cout << "], ";
+        }
+        std::cout << "]";
+    }
+
+
+    std::map<T, int> Get3Coloring()
+    {
+        std::map<T, int> colors;
+        if (dfs(std::vector<T>(vertices.begin(), vertices.end()),
+                           colors,
+                           0))
+            return colors;
+        else
+            return std::map<T, int>();
+    }
+
+    std::map<T, int> GetColoring(int colorSize)
+    {
+        std::map<T, int> colors;
+        if (dfs(std::vector<T>(vertices.begin(), vertices.end()),
+                           colors,
+                           0,
+                           colorSize))
+            return colors;
+        else
+            return std::map<T, int>();
+    }
 };
 
 
@@ -598,13 +670,12 @@ int main()
             }
         }
 
-        /* a */
+        /* liste susjedstva */
         /*
                 g.DrawAdj(gname);
                 g.DrawGraphTable();
                 putchar('\n');
         */
-        /* c */
         /*
         test planarnosti
         if (g.Reduce().GetK33().first.size() > 0)
@@ -625,8 +696,22 @@ int main()
             DrawVector(g.Reduce().GetK5(), ",");
         }*/
 
-        DrawVector(g.GetIndegSorted(), ", ");
-        std::cout  << '\n';
+
+        /* bojenje d)
+
+        auto m = g.Get3Coloring();
+
+        if (m.size() > 0)
+        {
+            for (auto &v: g.GetVertices())
+                std::cout << v << " \\rightarrow " << m[v] << '\n';
+        }
+        else if ((m = g.GetColoring(4)).size() > 0)
+        {
+            for (auto &v: g.GetVertices())
+                std::cout << v << " \\rightarrow " << m[v] << '\n';
+        }
+        std::cout << "\n\n"; */
     }
 
     return 0;
