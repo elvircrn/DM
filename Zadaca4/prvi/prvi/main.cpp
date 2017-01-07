@@ -26,6 +26,8 @@ void end(std::string s)
 template<class T>
 void DrawVector(const std::vector<T> &v, std::string sep = "")
 {
+    if (v.empty())
+        return;
     std::cout << v[0];
     for (size_t i = 1; i < v.size(); i++)
         std::cout << sep << v[i];
@@ -33,21 +35,21 @@ void DrawVector(const std::vector<T> &v, std::string sep = "")
 
 namespace patch
 {
-    template<class T>
-    std::string ToString(const T &x)
-    {
-        std::stringstream ss;
-        ss << x;
-        return ss.str();
-    }
+template<class T>
+std::string ToString(const T &x)
+{
+    std::stringstream ss;
+    ss << x;
+    return ss.str();
+}
 
-    int ToInt(const std::string &s)
-    {
-        int x;
-        std::stringstream ss(s);
-        ss >> x;
-        return x;
-    }
+int ToInt(const std::string &s)
+{
+    int x;
+    std::stringstream ss(s);
+    ss >> x;
+    return x;
+}
 }
 
 std::vector<std::string> GenIt(int n)
@@ -147,10 +149,19 @@ class Bitmask
     long long mask;
 public:
 
-    Bitmask() { mask = 0; }
-    Bitmask(long long _mask) { mask = _mask; }
+    Bitmask()
+    {
+        mask = 0;
+    }
+    Bitmask(long long _mask)
+    {
+        mask = _mask;
+    }
 
-    long long get() { return mask; }
+    long long get()
+    {
+        return mask;
+    }
 
     void turn_on(long long index)
     {
@@ -172,10 +183,11 @@ public:
     int count()
     {
         int ret = 0;
-        while (mask)
+        long long m = mask;
+        while (m)
         {
-            ret += mask & 1;
-            mask >>= 1;
+            ret += (m & 1);
+            m >>= 1;
         }
         return ret;
     }
@@ -187,7 +199,7 @@ public:
         std::vector<int> ret;
         while (m)
         {
-            if (mask & 1)
+            if (m % 2)
                 ret.push_back(index);
             m >>= 1;
             index++;
@@ -214,14 +226,16 @@ public:
         edges.clear();
         m.clear();
         flow.clear();
+        outdeg.clear();
+        indeg.clear();
     }
 
     std::pair<std::vector<T>, std::vector<T>> GetK33()
     {
         int ind = 0;
-        
+
         std::map<T, int> enc;
-        std::vector<int, T> dec(vertices.size());
+        std::vector<T> dec(vertices.size());
 
         for (auto& v: vertices)
         {
@@ -229,45 +243,44 @@ public:
             dec[ind - 1] = v;
         }
 
-        for (int i = 0; i < (1 << vertices.size()); i++)
+        int vsize = vertices.size();
+
+        for (int i = 0; i < (1<<vsize); i++)
         {
             Bitmask one(i);
             if (one.count() != 3)
                 continue;
-            for (int j = 0; j < (1 << vertices.size()); j++)
+            for (int j = 0; j < (1<<vsize); j++)
             {
                 Bitmask two(j);
 
-                if (two.count() != 3)
+                if (two.count() != 3 || ((one.get() & two.get()) != 0))
                     continue;
-                
-                if ((one.get() & two.get()) == 0)
-                {
-                    bool valid = true;
-                    for (auto& x : one.getBits())
-                    {
-                        for (auto& y : two.getBits())
-                        {
-                            if (x != y && !m[dec[x]][dec[y]])
-                            {
-                                valid = false;
-                                break;
-                            }
-                        }
-                        if (!valid)
-                            break;
-                    }
-                    
-                    if (valid)
-                    {
-                        std::vector<T> first, second;
-                        for (auto& x : one.getBits())
-                            first.push_back(dec[x]);
-                        for (auto& x : two.getBits())
-                            second.push_back(dec[x]);
 
-                        return { first, second };
+                bool valid = true;
+                for (auto& x : one.getBits())
+                {
+                    for (auto& y : two.getBits())
+                    {
+                        if (x != y && !m[dec[x]][dec[y]])
+                        {
+                            valid = false;
+                            break;
+                        }
                     }
+                    if (!valid)
+                        break;
+                }
+
+                if (valid)
+                {
+                    std::vector<T> f, s;
+                    for (auto& x : one.getBits())
+                        f.push_back(dec[x]);
+                    for (auto& x : two.getBits())
+                        s.push_back(dec[x]);
+
+                    return { f, s };
                 }
             }
         }
@@ -279,7 +292,7 @@ public:
     {
         int ind = 0;
         std::map<T, int> enc;
-        std::vector<int, T> dec(vertices.size());
+        std::vector<T> dec(vertices.size());
 
         for (auto& v: vertices)
         {
@@ -287,7 +300,7 @@ public:
             dec[ind - 1] = v;
         }
 
-        for (int i = 0; i < vertices.size(); i++)
+        for (int i = 0; i < (1<<vertices.size()); i++)
         {
             Bitmask mask(i);
             if (mask.count() != 5)
@@ -297,7 +310,7 @@ public:
             {
                 for (auto& y : mask.getBits())
                 {
-                    if (x != y && !m[dec(x)][dec(y)])
+                    if (x != y && !m[dec[x]][dec[y]])
                     {
                         valid = false;
                         break;
@@ -383,11 +396,20 @@ public:
         return (int)vertices.size();
     }
 
-    std::map<T, int> GetIndegs() { return indeg; }
+    std::map<T, int> GetIndegs()
+    {
+        return indeg;
+    }
 
-    int Indeg(const T& x) { return indeg[x]; }
+    int Indeg(const T& x)
+    {
+        return indeg[x];
+    }
 
-    int Outdeg(const T& x) { return outdeg[x]; }
+    int Outdeg(const T& x)
+    {
+        return outdeg[x];
+    }
 
     int E() const
     {
@@ -406,18 +428,25 @@ public:
     void DrawAdj(const std::string &name, bool drawWeights = false)
     {
         std::cout << "Lista susjedstva za graf " << name << '\n';
+        begin("equation*");
+        putchar('\n');
+        begin("aligned");
+        putchar('\n');
         for (auto& u : vertices)
         {
             std::cout << u << " &\\rightarrow ";
-            std::cout << " { " << g[u][0].v;
+            std::cout << " \\{ " << g[u][0].v;
 
             for (int i = 1; i < g[u].size(); i++)
             {
                 auto e = g[u][i];
                 std::cout << ", " << e.v;
             }
-            std::cout << " }\n";
+            std::cout << " \\}\\\\\n";
         }
+        end("aligned");
+        putchar('\n');
+        end("equation*");
     }
 
     void DrawGraphTable() const
@@ -437,16 +466,42 @@ public:
             {
                 mat.back().push_back(
                     (dist[x][y] == std::numeric_limits<int>::max()) ? "-" :
-                                    patch::ToString(dist[x][y]));
+                    patch::ToString(dist[x][y]));
             }
         }
 
         DrawTable<T>(
-                std::vector<T>(vertices.begin(), vertices.end()),
-                std::vector<T>(vertices.begin(), vertices.end()),
-                mat,
-                ""
-                );
+            std::vector<T>(vertices.begin(), vertices.end()),
+            std::vector<T>(vertices.begin(), vertices.end()),
+            mat,
+            ""
+        );
+    }
+
+    void RemoveVertex(const T& vertex)
+    {
+        vertices.erase(vertex);
+        g[vertex].clear();
+        outdeg[vertex] = 0;
+        indeg[vertex] = 0;
+
+        for (auto& v : vertices)
+        {
+            m[vertex][v] = 0;
+            m[v][vertex] = 0;
+        }
+    }
+
+    Graph<T> Reduce()
+    {
+        Graph<T> ret = (*this);
+        for (auto& v : ret.vertices)
+            if (ret.outdeg[v] == 2)
+            {
+                ret.RemoveVertex(v);
+                ret.AddEdge(g[v][0].v, g[v][1].v, 1);
+            }
+        return ret;
     }
 };
 
@@ -480,14 +535,14 @@ public:
     {
         auto v = g.GetVertices();
         DrawTable<T>(std::vector<T>(v.begin(), v.end()),
-                { "Indeg: " },
-                { indeg },
-                topLeft);
+        { "Indeg: " },
+        { indeg },
+        topLeft);
         std::cout << '\n';
         DrawTable<T>(std::vector<T>(v.begin(), v.end()),
-                { "Outdeg" },
-                { outdeg },
-                topLeft);
+        { "Outdeg" },
+        { outdeg },
+        topLeft);
         std::cout << "\n\n";
         return (*this);
     }
@@ -506,6 +561,7 @@ int main()
     while (getchar() == '{')
     {
         g.Clear();
+        std::string gname = "\\(G_" + patch::ToString(++index) + "\\)";
         for (;;)
         {
             getchar();
@@ -532,8 +588,31 @@ int main()
                 break;
             }
         }
-        g.DrawAdj("G" + patch::ToString(index++));
-        putchar('\n');
+
+        /* a */
+        /*
+                g.DrawAdj(gname);
+                g.DrawGraphTable();
+                putchar('\n');
+        */
+        /* c */
+        if (g.Reduce().GetK33().first.size() > 0)
+        {
+            std::cout << "K33 grafa " << gname << " glasi:\n";
+            std::cout << '\t';
+            DrawVector(g.Reduce().GetK33().first, ",");
+            std::cout << '\n';
+            std::cout << '\t';
+            DrawVector(g.Reduce().GetK33().second, ",");
+            std::cout << '\n';
+
+            g.Reduce().DrawGraphTable();
+        }
+        if (g.Reduce().GetK5().size() > 0)
+        {
+            std::cout << "K5 grafa " << gname << " glasi:\n";
+            DrawVector(g.Reduce().GetK5(), ",");
+        }
     }
 
     return 0;

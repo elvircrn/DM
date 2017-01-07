@@ -406,18 +406,25 @@ public:
     void DrawAdj(const std::string &name, bool drawWeights = false)
     {
         std::cout << "Lista susjedstva za graf " << name << '\n';
+        begin("equation*");
+        putchar('\n');
+        begin("aligned");
+        putchar('\n');
         for (auto& u : vertices)
         {
-            std::cout << u << " \\rightarrow ";
-            std::cout << " { " << g[u][0].v;
+            std::cout << u << " &\\rightarrow ";
+            std::cout << " \\{ " << g[u][0].v;
 
             for (int i = 1; i < g[u].size(); i++)
             {
                 auto e = g[u][i];
                 std::cout << ", " << e.v;
             }
-            std::cout << " }\n";
+            std::cout << " \\}\\\\\n";
         }
+        end("aligned");
+        putchar('\n');
+        end("equation*");
     }
 
     void DrawGraphTable() const

@@ -853,8 +853,8 @@ public:
             finalMatrix.push_back(std::vector<std::string>());
             for (auto& y : v)
             {
-                if (m[x][y] > 0 && flow[x][y] > 0)
-                    finalMatrix.back().push_back(patch::ToString(flow[x][y]));
+                if (m[x][y] > 0 && flow[y][x] > 0)
+                    finalMatrix.back().push_back(patch::ToString(flow[y][x]));
                     //finalMatrix.back().push_back(patch::ToString(m[x][y] - flow[x][y]));
                 else
                     finalMatrix.back().push_back("0");
@@ -875,11 +875,19 @@ public:
         v.erase(v.find("D"));
         v.erase(v.find("M"));
         std::vector<std::vector<std::string>> finalMatrix;
+
+        begin("equation*");
+        std::cout << '\n';
+        begin("aligned");
+        std::cout << '\n';
         for (auto& x : v)
             for (auto& y : v)
-                if (m[x][y] && flow[x] [y])
-                    //std::cout << m[x][y] - flow[x][y];
-                    std::cout << "Match: " << x << ' ' << y << '\n';
+                if (m[x][y] && flow[y] [x])
+                    std::cout << "Match: " << x << " &\\rightarrow " << y << "\\\\\n";
+        end("aligned");
+        std::cout << '\n';
+        end("equation*");
+        std::cout << '\n';
         return (*this);
     }
 };
