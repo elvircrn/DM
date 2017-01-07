@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1483499380 source:c:\users\elvircrn\documents\codes2\dm\zadaca4\peti\peti\main.cpp
+	<iostream>
+	<cstdio>
+	<queue>
+	<cctype>
+	<cstdlib>
+	<algorithm>
+	<set>
+	<map>
+	<set>
+	<stack>
+	<vector>
+	<limits>
+	<sstream>
+

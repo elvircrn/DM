@@ -1,0 +1,975 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{amsmath}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{tabu}
+\usepackage[section]{placeins}
+\usepackage{lscape}
+\usepackage{xcolor}
+\lstset { %
+    language=C++,
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+}
+
+
+
+\usepackage[margin=1in,headheight=13.6pt]{geometry}
+
+
+\DeclareMathSizes{10}{9}{8}{7}   
+
+
+\title{DM Zadaæa 4}
+\author{Elvir Crnèeviæ}
+\date{Decembar 2016 / Januar 2017 :)}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead {Elvir Crnèeviæ \\ Broj indeksa: 17455}
+\rhead {DM Zadaæa 3 \\ Decembar, 2016}
+\maketitle
+
+\newpage
+\section*{Zadatak 2}
+
+Dat je graf
+\begin{equation*}
+    \begin{aligned}
+        G_E & =  \{ (\(L_{1}\), \(L_{2}\), 1060), (\(L_{1}\), \(L_{5}\), 830), (\(L_{1}\), \(L_{12}\), 720),
+        (\(L_{2}\), \(L_{5}\), 1170), (\(L_{2}\), \(L_{6}\), 470), (\(L_{2}\), \(L_{10}\), 710), \\
+        & (\(L_{3}\), \(L_{4}\), 1330), (\(L_{3}\), \(L_{8}\), 360), (\(L_{3}\), \(L_{11}\), 1080),
+        (\(L_{4}\), \(L_{9}\), 1010), (\(L_{4}\), \(L_{10}\), 480), (\(L_{5}\), \(L_{7}\), 600), \\
+        & (\(L_{5}\), \(L_{10}\), 600), (\(L_{5}\), \(L_{12}\), 1290), (\(L_{6}\), \(L_{8}\), 780),
+        (\(L_{6}\), \(L_{12}\), 520), (\(L_{7}\), \(L_{9}\), 940), (\(L_{7}\), \(L_{11}\), 1190), \\
+        & (\(L_{7}\), \(L_{12}\), 510), (\(L_{8}\), \(L_{10}\), 250), (\(L_{8}\), \(L_{12}\), 820),
+        (\(L_{9}\), \(L_{10}\), 370), (\(L_{9}\), \(L_{11}\), 1130), (\(L_{10}\), \(L_{11}\), 960), \\
+        & (\(L_{10}\), \(L_{12}\), 450) \}
+    \end{aligned}
+\end{equation*}
+
+\begin{enumerate}[label=\alph*.]
+\item Primjenom Kruskalovog algoritma sa bojenjem èvorova
+
+Neka je dat skup boja
+\[
+B = \{ \(L_{10}\), \(L_{11}\), \(L_{12}\), \(L_{1}\), \(L_{2}\), \(L_{3}\), \(L_{4}\), \(L_{5}\), \(L_{6}\), \(L_{7}\), \(L_{8}\), \(L_{9}\)\}
+\]
+koji je zapravo jednak skupu svih cvorova ovog grafa:
+Suma svih tezina je 5690.
+\[
+G_V = \{ \(L_{10}\), \(L_{11}\), \(L_{12}\), \(L_{1}\), \(L_{2}\), \(L_{3}\), \(L_{4}\), \(L_{5}\), \(L_{6}\), \(L_{7}\), \(L_{8}\), \(L_{9}\)\}.
+\]
+\par
+Na pocetku, svakom cvoru pridruzujemo boju jednaku njemu samom, a potom slijedi Kruskalov algoritam sa grupisanjem cvorova koji ne uzima u obzir velicinu grupe pri spajanju dvije grupe. Potrebno je napomenuti da ce zadatak a i b imati identicne tabele obzirom na to da kod koji generise ovu tabelu svakako radi optimalnu verziju. Kako je spajanje 2 grupe arbitraran postupak, pretvaracemo se da je prva izvedba rezultirala optimalnim grupisanjem.
+\par
+Prva celija u redu oznacava sa kojom granom radimo u trenutnoj iteraciji, pri cemu prvi red predstavlja pocetno stanje boja svih cvorova. Znak \(\checkmark\) pored grane znaci da cemo uzeti tu granu i staviti je u MST kojeg cemo oznaciti sa \(T\). Algoritam se terminira kada \( \mid G_V \mid - 1 = \mid T_E \mid \), gdje je \( \mid S \mid \) oznaka za broj elemenata u nekom skupu koja vrijedi za ovu i samo ovu zadacu iz diskretne matematike.
+\newline
+
+\begin{figure}[!htb]
+\centering
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+Iteracija & \(L_{10}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+ \hline
+ & \(L_{10}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+e: (\(L_{10}\), \(L_{8}\), 250) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+e: (\(L_{8}\), \(L_{3}\), 360) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+e: (\(L_{10}\), \(L_{9}\), 370) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{12}\), \(L_{10}\), 450) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{2}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{2}\), \(L_{6}\), 470) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{6}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{4}\), \(L_{10}\), 480) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{6}\) & \(L_{8}\) & \(L_{8}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{7}\), \(L_{12}\), 510) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{6}\) & \(L_{8}\) & \(L_{8}\) & \(L_{5}\) & \(L_{6}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{6}\), \(L_{12}\), 520) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{5}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{5}\), \(L_{10}\), 600) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{5}\), \(L_{7}\), 600) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{2}\), \(L_{10}\), 710) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{12}\), \(L_{1}\), 720) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{6}\), \(L_{8}\), 780) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{12}\), \(L_{8}\), 820) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{5}\), \(L_{1}\), 830) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{7}\), \(L_{9}\), 940) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{10}\), \(L_{11}\), 960) \checkmark & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+\end{tabular}
+\end{figure}
+
+
+
+
+
+\begin{equation*}
+    \begin{aligned}
+T &= \{ (\(L_{10}\), \(L_{8}\), 250), (\(L_{8}\), \(L_{3}\), 360), (\(L_{10}\), \(L_{9}\), 370), (\(L_{12}\), \(L_{10}\), 450), (\(L_{2}\), \(L_{6}\), 470), (\(L_{4}\), \(L_{10}\), 480),\\ &(\(L_{7}\), \(L_{12}\), 510), (\(L_{6}\), \(L_{12}\), 520), (\(L_{5}\), \(L_{10}\), 600), (\(L_{12}\), \(L_{1}\), 720), (\(L_{10}\), \(L_{11}\), 960) \}
+    \end{aligned}
+\end{equation*}
+Suma svih tezina je 5690.
+
+\newpage
+
+
+\item Primjenom optimalnog Kruskalovog algoritma
+
+\par
+Potrebno je uvesti jos jedan niz koji ce pratiti broj cvorova koji imaju odredjenu boju. Kada spajamo dvije boje, neophodno je obojiti onom bojom koja ima vise pripadnika.
+
+\par
+Slijede dvije tabele(pri cemu je druga identicna onoj u prethodnom zadatku) koje opisuju rad opisanog algoritma. Prvi red prve tabele predstavlja pocetna stanja - svaka boja ima samo jedan cvor. U posljednjoj iteraciji, svi su cvorovoi obojeni istom bojom pa je i broj elemenata koji pripadaju boji, u nasem slucaju, \(L_8\) jednak 12 sto je zapravo i jedan od indikatora da je algoritam zavrsio svoje djelovanje. Ocekivano, dobicemo identicno stablo kao i u prethodnom zadatku.
+
+\begin{figure}[!htb]
+\centering
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+Iteracija & \(L_{10}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+ \hline
+ & \(L_{10}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+e: (\(L_{10}\), \(L_{8}\), 250) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+e: (\(L_{8}\), \(L_{3}\), 360) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+e: (\(L_{10}\), \(L_{9}\), 370) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{12}\), \(L_{10}\), 450) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{2}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{2}\), \(L_{6}\), 470) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{6}\) & \(L_{8}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{4}\), \(L_{10}\), 480) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{6}\) & \(L_{8}\) & \(L_{8}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{7}\), \(L_{12}\), 510) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{6}\) & \(L_{8}\) & \(L_{8}\) & \(L_{5}\) & \(L_{6}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{6}\), \(L_{12}\), 520) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{5}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{5}\), \(L_{10}\), 600) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{5}\), \(L_{7}\), 600) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{2}\), \(L_{10}\), 710) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{1}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{12}\), \(L_{1}\), 720) \checkmark & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{6}\), \(L_{8}\), 780) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{12}\), \(L_{8}\), 820) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{5}\), \(L_{1}\), 830) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{7}\), \(L_{9}\), 940) & \(L_{8}\) & \(L_{11}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+e: (\(L_{10}\), \(L_{11}\), 960) \checkmark & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\) & \(L_{8}\)\\
+ \hline
+\end{tabular}
+\end{figure}
+
+
+\begin{figure}[!htb]
+\centering
+\begin{tabular}{ | c || c | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+Iteracija & \(L_{10}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+ \hline
+Pocetno stanje & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
+ \hline
+(\(L_{10}\), \(L_{8}\), 250) \checkmark & 2 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 2 & 1\\
+ \hline
+(\(L_{8}\), \(L_{3}\), 360) \checkmark & 3 & 1 & 1 & 1 & 1 & 3 & 1 & 1 & 1 & 1 & 3 & 1\\
+ \hline
+(\(L_{10}\), \(L_{9}\), 370) \checkmark & 4 & 1 & 1 & 1 & 1 & 4 & 1 & 1 & 1 & 1 & 4 & 4\\
+ \hline
+(\(L_{12}\), \(L_{10}\), 450) \checkmark & 5 & 1 & 5 & 1 & 1 & 5 & 1 & 1 & 1 & 1 & 5 & 5\\
+ \hline
+(\(L_{2}\), \(L_{6}\), 470) \checkmark & 5 & 1 & 5 & 1 & 2 & 5 & 1 & 1 & 2 & 1 & 5 & 5\\
+ \hline
+(\(L_{4}\), \(L_{10}\), 480) \checkmark & 6 & 1 & 6 & 1 & 2 & 6 & 6 & 1 & 2 & 1 & 6 & 6\\
+ \hline
+(\(L_{7}\), \(L_{12}\), 510) \checkmark & 7 & 1 & 7 & 1 & 2 & 7 & 7 & 1 & 2 & 7 & 7 & 7\\
+ \hline
+(\(L_{6}\), \(L_{12}\), 520) \checkmark & 9 & 1 & 9 & 1 & 9 & 9 & 9 & 1 & 9 & 9 & 9 & 9\\
+ \hline
+(\(L_{5}\), \(L_{10}\), 600) \checkmark & 10 & 1 & 10 & 1 & 10 & 10 & 10 & 10 & 10 & 10 & 10 & 10\\
+ \hline
+(\(L_{5}\), \(L_{7}\), 600) & 10 & 1 & 10 & 1 & 10 & 10 & 10 & 10 & 10 & 10 & 10 & 10\\
+ \hline
+(\(L_{2}\), \(L_{10}\), 710) & 10 & 1 & 10 & 1 & 10 & 10 & 10 & 10 & 10 & 10 & 10 & 10\\
+ \hline
+(\(L_{12}\), \(L_{1}\), 720) \checkmark & 11 & 1 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11\\
+ \hline
+(\(L_{6}\), \(L_{8}\), 780) & 11 & 1 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11\\
+ \hline
+(\(L_{12}\), \(L_{8}\), 820) & 11 & 1 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11\\
+ \hline
+(\(L_{5}\), \(L_{1}\), 830) & 11 & 1 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11\\
+ \hline
+(\(L_{7}\), \(L_{9}\), 940) & 11 & 1 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11 & 11\\
+ \hline
+(\(L_{10}\), \(L_{11}\), 960) \checkmark & 12 & 12 & 12 & 12 & 12 & 12 & 12 & 12 & 12 & 12 & 12 & 12\\
+ \hline
+\end{tabular}
+\end{figure}
+
+\newpage
+
+\item Primjenom optimiziranog (kvadratnog) Primovog algoritma
+\par
+Sljedeca tabela predstavlja opisuje rad Primovog algoritma primjenjenog nad grafom \(G\). Za Primov algoritam nam je potreban neki niz ciji indeks predstavlja cvor grafa, a brojcana vrijednost na tom indeksu predstavlja najmanju tezinu koju je algoritam pokupio prije ulaska u taj cvor.
+\\
+\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+Iteracija & \(L_{10}\) & \(L_{11}\) & \(L_{12}\) & \(L_{1}\) & \(L_{2}\) & \(L_{3}\) & \(L_{4}\) & \(L_{5}\) & \(L_{6}\) & \(L_{7}\) & \(L_{8}\) & \(L_{9}\)\\
+ \hline
+ \hline
+Pocetno stanje & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty\\
+ \hline
+(\(L_{10}\), \(L_{10}\), 0) & 0\checkmark & 960 & 450 & \infty & 710 & \infty & 480 & 600 & \infty & \infty & 250 & 370\\
+ \hline
+(\(L_{10}\), \(L_{8}\), 250) & 0\checkmark & 960 & 450 & \infty & 710 & 360 & 480 & 600 & 780 & \infty & 250\checkmark & 370\\
+ \hline
+(\(L_{8}\), \(L_{3}\), 360) & 0\checkmark & 960 & 450 & \infty & 710 & 360\checkmark & 480 & 600 & 780 & \infty & 250\checkmark & 370\\
+ \hline
+(\(L_{10}\), \(L_{9}\), 370) & 0\checkmark & 960 & 450 & \infty & 710 & 360\checkmark & 480 & 600 & 780 & 940 & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{10}\), \(L_{12}\), 450) & 0\checkmark & 960 & 450\checkmark & 720 & 710 & 360\checkmark & 480 & 600 & 520 & 510 & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{10}\), \(L_{4}\), 480) & 0\checkmark & 960 & 450\checkmark & 720 & 710 & 360\checkmark & 480\checkmark & 600 & 520 & 510 & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{12}\), \(L_{7}\), 510) & 0\checkmark & 960 & 450\checkmark & 720 & 710 & 360\checkmark & 480\checkmark & 600 & 520 & 510\checkmark & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{12}\), \(L_{6}\), 520) & 0\checkmark & 960 & 450\checkmark & 720 & 470 & 360\checkmark & 480\checkmark & 600 & 520\checkmark & 510\checkmark & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{6}\), \(L_{2}\), 470) & 0\checkmark & 960 & 450\checkmark & 720 & 470\checkmark & 360\checkmark & 480\checkmark & 600 & 520\checkmark & 510\checkmark & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{10}\), \(L_{5}\), 600) & 0\checkmark & 960 & 450\checkmark & 720 & 470\checkmark & 360\checkmark & 480\checkmark & 600\checkmark & 520\checkmark & 510\checkmark & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{12}\), \(L_{1}\), 720) & 0\checkmark & 960 & 450\checkmark & 720\checkmark & 470\checkmark & 360\checkmark & 480\checkmark & 600\checkmark & 520\checkmark & 510\checkmark & 250\checkmark & 370\checkmark\\
+ \hline
+(\(L_{10}\), \(L_{11}\), 960) & 0\checkmark & 960\checkmark & 450\checkmark & 720\checkmark & 470\checkmark & 360\checkmark & 480\checkmark & 600\checkmark & 520\checkmark & 510\checkmark & 250\checkmark & 370\checkmark\\
+ \hline
+\end{tabular}
+\\
+\\
+\par
+Znak \checkmark predstavlja oznaku za cvor koji osigurava to da se necemo nikada vratiti u vec posjecen cvor. U svakoj iteraciji, uzimamo najmanju brojcanu vrijednost koja nema \checkmark i granu asociranu s tom itearacijom. U prvoj celiji u svakom redu se nalazi grana koja pripada minimalnom razipinjujucem stablu za graf \(G\) koje je, potpuno ocekivano, potpuno  jednako onom pod a) i b):
+
+\begin{equation*}
+    \begin{aligned}
+T &= \{ (\(L_{10}\), \(L_{8}\), 250), (\(L_{8}\), \(L_{3}\), 360), (\(L_{10}\), \(L_{9}\), 370), (\(L_{12}\), \(L_{10}\), 450), (\(L_{2}\), \(L_{6}\), 470), (\(L_{4}\), \(L_{10}\), 480),\\ &(\(L_{7}\), \(L_{12}\), 510), (\(L_{6}\), \(L_{12}\), 520), (\(L_{5}\), \(L_{10}\), 600), (\(L_{12}\), \(L_{1}\), 720), (\(L_{10}\), \(L_{11}\), 960) \}
+    \end{aligned}
+\end{equation*}
+
+Kvadratna priroda(odnosno \(O(\mid E\mid log\mid V\mid)\) u source-kodu) ovog algoritma lezi u odabiru najmanjeg cvora za sljedecu iteraciju.
+\end{enumerate}
+
+\newpage
+
+\section*{Zadatak 3}
+\par
+Napomena: autor ovog teksta cijene naziva udaljenosti.
+
+\par
+Dat je graf \(G\) sa skupom cvorova \(G_V\):
+\begin{equation*}
+    \begin{aligned}
+G_V = \{ Amcazo, Brot, Elyfas, Evesa, Lyapuz, Omacodi, Quwuti, Zote\}
+    \end{aligned}
+\end{equation*}
+
+pri cemu su tezine izmedju cvorova zadane tabelarno:\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | }
+\hline
+ & Amcazo & Brot & Elyfas & Evesa & Lyapuz & Omacodi & Quwuti & Zote\\
+ \hline
+ \hline
+Amcazo & 0 & - & 430 & 1390 & 680 & 490 & 210 & 1150\\
+ \hline
+Brot & - & 0 & 1440 & 1380 & 390 & 1400 & 330 & 1010\\
+ \hline
+Elyfas & 430 & 1440 & 0 & - & 1440 & 1020 & 720 & 610\\
+ \hline
+Evesa & 1390 & 1380 & - & 0 & 380 & 280 & 840 & 890\\
+ \hline
+Lyapuz & 680 & 390 & 1440 & 380 & 0 & 1340 & 750 & 440\\
+ \hline
+Omacodi & 490 & 1400 & 1020 & 280 & 1340 & 0 & 990 & -\\
+ \hline
+Quwuti & 210 & 330 & 720 & 840 & 750 & 990 & 0 & 1470\\
+ \hline
+Zote & 1150 & 1010 & 610 & 890 & 440 & - & 1470 & 0\\
+ \hline
+\end{tabular}
+\\
+Potrebno je rijesiti All-Pair-Shortest-Path problem nad ovim grafom pomocu Dijkstrinog algoritma.
+
+\par
+Primjenimo Dijkstring algoritam na nacin da krenemo od grada Omacodi, a zatim se sirimo po citavom grafu, da bi na kraju dobili SSSP od izvora Omacodi prema svim ostalim gradovima. Postupak izgleda ovako:\\
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | }
+\hline
+Iteracija & Amcazo & Brot & Elyfas & Evesa & Lyapuz & Omacodi & Quwuti & Zote\\
+ \hline
+ \hline
+ & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty\\
+ \hline
+Trenutni cvor: Omacodi & 490 & 1400 & 1020 & 280 & 1340 & 0 & 990 & \infty\\
+ \hline
+Trenutni cvor: Evesa & 490 & 1400 & 1020 & 280 & 660 & 0 & 990 & 1170\\
+ \hline
+Trenutni cvor: Amcazo & 490 & 1400 & 920 & 280 & 660 & 0 & 700 & 1170\\
+ \hline
+Trenutni cvor: Lyapuz & 490 & 1050 & 920 & 280 & 660 & 0 & 700 & 1100\\
+ \hline
+Trenutni cvor: Quwuti & 490 & 1030 & 920 & 280 & 660 & 0 & 700 & 1100\\
+ \hline
+Trenutni cvor: Elyfas & 490 & 1030 & 920 & 280 & 660 & 0 & 700 & 1100\\
+ \hline
+Trenutni cvor: Brot & 490 & 1030 & 920 & 280 & 660 & 0 & 700 & 1100\\
+ \hline
+Trenutni cvor: Zote & 490 & 1030 & 920 & 280 & 660 & 0 & 700 & 1100\\
+ \hline
+\end{tabular}
+\\\\
+\par
+Svaki red ove tabele predstavlja jednu iteraciju Dijkstrinog algoritma, pri cemu prva celija svakog reda predstavlja cvor u kojem se ne ona nalazi. Ostale celije u tom redu predstavljaju udaljenost grada Omacodi do svakog grada u mrezi. Na primjer, u posljednoj iteraciji vrijedi da je udaljenost grada Omacodi do Zote 1100. Ovo je uradjeno radi ilustracije postupka rada Dijkstrinog algoritma. U sljedecem odjeljku cemo ga primjenitit na problem zadatka 3.
+
+\par
+Da bismo rijesili ovaj zadatak, samo cemo primjeniti ovaj isti algoritam za sve ostale cvorove u grafu, pri cemu cemo za trenutna stanja u Dijkstrinom algoritmu, umjesot niza, koristiti matricu kao sto je to naznaceno u tekstu zadatka. U programu, iskoristena je cinjenica da je data simetricna matrica, sto ce smanjiti ubacivanje cvorova i tezina u std::set. Konacni rezultat izgleda ovako:\\
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | }
+\hline
+ & Amcazo & Brot & Elyfas & Evesa & Lyapuz & Omacodi & Quwuti & Zote\\
+ \hline
+ \hline
+Amcazo & 0 & 540 & 430 & 770 & 680 & 490 & 210 & 1040\\
+ \hline
+Brot & 540 & 0 & 1050 & 770 & 390 & 1050 & 330 & 830\\
+ \hline
+Elyfas & 430 & 1050 & 0 & 1300 & 1050 & 1020 & 720 & 610\\
+ \hline
+Evesa & 770 & 770 & 1300 & 0 & 380 & 280 & 840 & 820\\
+ \hline
+Lyapuz & 680 & 390 & 1050 & 380 & 0 & 1340 & 750 & 440\\
+ \hline
+Omacodi & 490 & 1050 & 1020 & 280 & 1340 & 0 & 990 & 2460\\
+ \hline
+Quwuti & 210 & 330 & 720 & 840 & 750 & 990 & 0 & 1470\\
+ \hline
+Zote & 1040 & 830 & 610 & 820 & 440 & 2460 & 1470 & 0\\
+ \hline
+\end{tabular}
+
+Primjetimo da se udaljenost izmedju grada Elyfas i Lyapuz smanjila, iako je na pocetku postojala direktna linija izmedju ta 2 grada. Niti jedna vrijednost se nije povecala sto je jedan od pokazatelja da smo uspjesno dosli do rjesenja ovog problema.
+
+\newpage
+
+\section*{Zadatak 4}
+
+Neka je dat graf \(G\) sa skupom cvorova \(G_V = \{ A, B, C, D, E, F, G, H, I, J\}\) i matricom susjedstva \\
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | }
+\hline
+ & A & B & C & D & E & F & G & H & I & J\\
+ \hline
+ \hline
+A & - & - & - & - & - & - & - & -95 & - & -\\
+ \hline
+B & 45 & - & - & - & - & - & - & 60 & - & -\\
+ \hline
+C & - & 60 & - & - & -105 & - & - & - & - & -\\
+ \hline
+D & - & 20 & - & - & - & - & - & - & - & -\\
+ \hline
+E & - & - & - & 65 & - & - & - & - & - & -\\
+ \hline
+F & - & 70 & - & - & - & - & - & - & - & -\\
+ \hline
+G & - & - & 25 & - & - & - & - & - & - & -85\\
+ \hline
+H & - & - & - & - & 40 & 50 & - & - & - & -30\\
+ \hline
+I & - & - & 80 & - & - & -65 & - & - & - & -\\
+ \hline
+J & - & - & 65 & 75 & - & - & - & - & 55 & -\\
+ \hline
+\end{tabular}
+\\
+\par
+Bellman-Fordov algoritam detektuje negativne cikluse u grafu ako nakon \(\mid G_V\mid\) iteracija postoji grana koja relaksira neka 2 cvora. Sada cemo pokazati da upravu takav slucaj postoji u ovom grafu. Neka je cvor \(A\) cvor iz kojeg krece algoritam. Dobijamo sljedecu tabelu:\\
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | }
+\hline
+ & A & B & C & D & E & F & G & H & I & J\\
+ \hline
+ \hline
+Inicijalno stanje:  & 0 & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\)\\
+ \hline
+Iteracija 1 & 0 & 25 & -60 & -50 & -55 & -45 & \(\infty\) & -95 & -70 & -125\\
+ \hline
+Iteracija 2 & 0 & -65 & -60 & -100 & -165 & -135 & \(\infty\) & -95 & -70 & -125\\
+ \hline
+Iteracija 3 & -35 & -80 & -60 & -100 & -165 & -135 & \(\infty\) & -95 & -70 & -125\\
+ \hline
+Iteracija 4 & -35 & -80 & -95 & -100 & -165 & -135 & \(\infty\) & -130 & -105 & -160\\
+ \hline
+Iteracija 5 & -35 & -100 & -95 & -135 & -200 & -170 & \(\infty\) & -130 & -105 & -160\\
+ \hline
+Iteracija 6 & -70 & -115 & -95 & -135 & -200 & -170 & \(\infty\) & -130 & -105 & -160\\
+ \hline
+Iteracija 7 & -70 & -115 & -130 & -135 & -200 & -170 & \(\infty\) & -165 & -140 & -195\\
+ \hline
+Iteracija 8 & -70 & -135 & -130 & -170 & -235 & -205 & \(\infty\) & -165 & -140 & -195\\
+ \hline
+Iteracija 9 & -105 & -150 & -130 & -170 & -235 & -205 & \(\infty\) & -165 & -140 & -195\\
+ \hline
+Iteracija 10 & -105 & -150 & -165 & -170 & -235 & -205 & \(\infty\) & -200 & -175 & -230\\
+ \hline
+Iteracija 11 & -105 & -170 & -165 & -205 & -270 & -240 & \(\infty\) & -200 & -175 & -230\\
+ \hline
+\end{tabular}
+\\\\
+Kako je \(\mid G_V\mid = 10\), a kako u iteraciji 11 upravo doslo do relaksacije i to u cvorovima \(C\), \(B\), \(E\) i \(F\), to ocito postoji ciklus u ovom grafu. Za njegovu detekciju se koristila sljedeca tabela 'parent' cvorova koja se mijenjala pri svakoj relaksaciji grane u Bellman-Fordovom algortimu:
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | }
+\hline
+ & A & B & C & D & E & F & G & H & I & J\\
+ \hline
+ \hline
+Inicijalno stanje:  & A & B & C & D & E & F & G & H & I & J\\
+ \hline
+Iteracija 1 & A & F & J & J & H & H &  & A & J & H\\
+ \hline
+Iteracija 2 & A & F & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 3 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 4 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 5 & B & F & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 6 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 7 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 8 & B & F & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 9 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 10 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+Iteracija 11 & B & D & J & E & C & I &  & A & J & H\\
+ \hline
+\end{tabular}
+
+Sada je samo dovoljno raditi 'backtracking' kroz ovaj niz (zapravo se sve vrijeme radilo o nizu) pocevsi od cvora koji se relaksirao u posljednjoj iteraciji i imamo negativni ciklus:
+\[
+A \rightarrow H \rightarrow J \rightarrow C \rightarrow E \rightarrow D \rightarrow B \rightarrow A, -95 - 30 + 65 - 105 + 65 + 45 < 0
+\]
+
+\newpage
+
+\section*{Zadatak 5}
+Dat je graf G, gdje je
+\( G_V = \{ x_{10}, x_{11}, x_{1}, x_{2}, x_{3}, x_{4}, x_{5}, x_{6}, x_{7}, x_{8}, x_{9}\} \) i data je matrica susjedstva
+
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+\(x_{10}\) & - & - & - & - & - & - & 27 & - & - & - & 11\\
+ \hline
+\(x_{11}\) & - & - & - & - & 40 & 33 & - & - & - & 38 & -\\
+ \hline
+\(x_{1}\) & 18 & - & - & 25 & - & - & - & - & - & - & -\\
+ \hline
+\(x_{2}\) & 7 & - & - & - & - & - & 17 & - & - & - & -\\
+ \hline
+\(x_{3}\) & - & - & - & - & - & 33 & - & - & - & 16 & -\\
+ \hline
+\(x_{4}\) & - & - & 5 & - & - & - & - & 8 & - & - & -\\
+ \hline
+\(x_{5}\) & - & - & - & - & - & - & - & - & - & - & -\\
+ \hline
+\(x_{6}\) & - & - & 21 & - & - & - & - & - & 5 & - & -\\
+ \hline
+\(x_{7}\) & 34 & - & - & - & - & - & - & - & - & - & 26\\
+ \hline
+\(x_{8}\) & - & - & - & - & - & - & - & 24 & 10 & - & -\\
+ \hline
+\(x_{9}\) & - & - & - & - & - & - & 26 & - & - & - & -\\
+ \hline
+\end{tabular}
+
+\begin{enumerate}[label=\alph*.]
+\item Pokažite da u ovom grafu ima taèno jedan izvor (èvor ulaznog stepena 0) i taèno jedan ponor (èvor izlaznog stepena 0), te da se radi o aciklièkom grafu
+
+Da bismo pokazali da graf ima tacno jedan izvor i ponor, posluzit cemo se sljedecim tabelama:
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Indeg:  & 3 & 0 & 2 & 1 & 1 & 2 & 3 & 2 & 2 & 2 & 2\\
+ \hline
+\end{tabular}
+
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Outdeg & 2 & 3 & 2 & 2 & 2 & 2 & 0 & 2 & 2 & 2 & 1\\
+ \hline
+\end{tabular}
+
+Ocito je \(x_{11}\) izvor, a \(x_5\) ponor.
+
+Za otkrivanje ciklusa koristimo DFS pretragu i WHITE/GREY/BLACK bojenje za posjecenost cvorova kako bi pronasli back-edge-ove u grafu. Graf ima ciklus akko postoji back-edge u tom grafu. 
+
+\begin{lstlisting}
+for (auto& e : g[node])
+    if (color [e.v] == DFS_GREY)
+        std::cout << "Postoji ciklus!\n";
+    else if (color[e.v] == DFS_WHITE)
+        Dfs(e.v);
+\end{lstlisting}
+
+Ako za neki cvor \(node\) postoji njegov susjed \(e\) takav da je njegova boja siva(to je boja koju poprimi cvor na pocetku dfs-a), tada je taj edge back-edge i pokazali smo da postoji ciklus u grafu \(G\). Pokrenuvsi algoritam, dobijamo sljedecu tabelu:
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Inicijalno:  & W & W & W & W & W & W & W & W & W & W & W\\
+ \hline
+Cvor:\(x_{10}\) & G & W & W & W & W & W & W & W & W & W & W\\
+ \hline
+Cvor:\(x_{5}\) & G & W & W & W & W & W & G & W & W & W & W\\
+ \hline
+Cvor:\(x_{9}\) & G & W & W & W & W & W & B & W & W & W & G\\
+ \hline
+Cvor:\(x_{11}\) & B & G & W & W & W & W & B & W & W & W & B\\
+ \hline
+Cvor:\(x_{3}\) & B & G & W & W & G & W & B & W & W & W & B\\
+ \hline
+Cvor:\(x_{4}\) & B & G & W & W & G & G & B & W & W & W & B\\
+ \hline
+Cvor:\(x_{1}\) & B & G & G & W & G & G & B & W & W & W & B\\
+ \hline
+Cvor:\(x_{2}\) & B & G & G & G & G & G & B & W & W & W & B\\
+ \hline
+Cvor:\(x_{6}\) & B & G & B & B & G & G & B & G & W & W & B\\
+ \hline
+Cvor:\(x_{7}\) & B & G & B & B & G & G & B & G & G & W & B\\
+ \hline
+Cvor:\(x_{8}\) & B & G & B & B & G & B & B & B & B & G & B\\
+ \hline
+Konacno:  & B & B & B & B & B & B & B & B & B & B & B\\
+ \hline
+\end{tabular}
+\\
+\\
+pa kako nismo pronasli back-edge, to zakljucujemo da je ovo aciklican graf.
+
+\newpage
+
+\item Izvršite topološko sortiranje èvorova ovog grafa obavljajuæi DFS pretragu poèev od izvora grafa;\\
+Kako smo pokazali da je graf \(G\) aciklican u prethodnom zadatku, mozemo primjeniti topolosko sortiranje. Takodje, posto smo pokazali da graf ima samo jedan izvor i jedan ponor, to znaci da je dovoljno krenuti DFS-om iz izvora da bi izvrsili kompletno topolosko sortiranje. Algoritam je dovoljno prost da je dovoljno samo navesti konacan rezultat (osoba koja pregleda ovo moze eventualno pogledati source-kod):
+\[ \(x_{11}\), \(x_{3}\), \(x_{8}\), \(x_{4}\), \(x_{6}\), \(x_{7}\), \(x_{1}\), \(x_{2}\), \(x_{10}\), \(x_{9}\), \(x_{5}\) \]
+
+\newpage
+\item Primjenom Dijkstrinog algoritma, pronaðite najkraæi put od izvora do ponora grafa;
+Dijkstrin algoritam primjenjen nad ovim grafom je ilustriran sljedecom tabelom:
+\\\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+ & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty & \infty\\
+ \hline
+Trenutni cvor: \(x_{11}\) & \infty & 0 & \infty & \infty & 40 & 33 & \infty & \infty & \infty & 38 & \infty\\
+ \hline
+Trenutni cvor: \(x_{4}\) & \infty & 0 & 38 & \infty & 40 & 33 & \infty & 41 & \infty & 38 & \infty\\
+ \hline
+Trenutni cvor: \(x_{1}\) & 56 & 0 & 38 & 63 & 40 & 33 & \infty & 41 & \infty & 38 & \infty\\
+ \hline
+Trenutni cvor: \(x_{8}\) & 56 & 0 & 38 & 63 & 40 & 33 & \infty & 41 & 48 & 38 & \infty\\
+ \hline
+Trenutni cvor: \(x_{3}\) & 56 & 0 & 38 & 63 & 40 & 33 & \infty & 41 & 48 & 38 & \infty\\
+ \hline
+Trenutni cvor: \(x_{6}\) & 56 & 0 & 38 & 63 & 40 & 33 & \infty & 41 & 46 & 38 & \infty\\
+ \hline
+Trenutni cvor: \(x_{7}\) & 56 & 0 & 38 & 63 & 40 & 33 & \infty & 41 & 46 & 38 & 72\\
+ \hline
+Trenutni cvor: \(x_{10}\) & 56 & 0 & 38 & 63 & 40 & 33 & 83 & 41 & 46 & 38 & 67\\
+ \hline
+Trenutni cvor: \(x_{2}\) & 56 & 0 & 38 & 63 & 40 & 33 & 80 & 41 & 46 & 38 & 67\\
+ \hline
+Trenutni cvor: \(x_{9}\) & 56 & 0 & 38 & 63 & 40 & 33 & 80 & 41 & 46 & 38 & 67\\
+ \hline
+\end{tabular}
+\\\\
+Pored toga smo azurirali parent cvorove svakog cvora sto nam je omogucilo da izvrsimo i rekonstrukciju najkraceg puta od \(x_{11}\) do \(x_{5}\):
+\[
+\(x_{11}\) \rightarrow \(x_{4}\) \rightarrow \(x_{1}\) \rightarrow \(x_{2}\) \rightarrow \(x_{5}\)\\
+\]
+ i tezak je 80 imaginarnih jedinica. Primjetimo da nakon cvora \(x_9\) u Dijkstrinom algoritmu sljedi cvor \(x_5\) sto terminira algoritam.
+
+\newpage
+\item Primjenom Bellman-Fordovog algoritma, pronaðite najkraæi put od izvora do ponora grafa.
+\\
+Postupak ovog algoritma je opisan pomocu sljedece 2 tabele:\\
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Inicijalno stanje:  & \(\infty\) & 0 & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\)\\
+ \hline
+Iteracija 1 & \(\infty\) & 0 & \(\infty\) & \(\infty\) & 40 & 33 & \(\infty\) & \(\infty\) & \(\infty\) & 38 & \(\infty\)\\
+ \hline
+Iteracija 2 & 56 & 0 & 38 & 63 & 40 & 33 & 83 & 41 & 48 & 38 & 74\\
+ \hline
+Iteracija 3 & 56 & 0 & 38 & 63 & 40 & 33 & 80 & 41 & 46 & 38 & 67\\
+ \hline
+Iteracija 4 & 56 & 0 & 38 & 63 & 40 & 33 & 80 & 41 & 46 & 38 & 67\\
+ \hline
+\end{tabular}
+\\
+Parent cvorovi za svaku iteraciju:
+\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Inicijalno stanje:  & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+Iteracija 1 &  & \(x_{11}\) &  &  & \(x_{11}\) & \(x_{11}\) &  &  &  & \(x_{11}\) & \\
+ \hline
+Iteracija 2 & \(x_{1}\) & \(x_{11}\) & \(x_{4}\) & \(x_{1}\) & \(x_{11}\) & \(x_{11}\) & \(x_{10}\) & \(x_{4}\) & \(x_{8}\) & \(x_{11}\) & \(x_{7}\)\\
+ \hline
+Iteracija 3 & \(x_{1}\) & \(x_{11}\) & \(x_{4}\) & \(x_{1}\) & \(x_{11}\) & \(x_{11}\) & \(x_{2}\) & \(x_{4}\) & \(x_{6}\) & \(x_{11}\) & \(x_{10}\)\\
+ \hline
+Iteracija 4 & \(x_{1}\) & \(x_{11}\) & \(x_{4}\) & \(x_{1}\) & \(x_{11}\) & \(x_{11}\) & \(x_{2}\) & \(x_{4}\) & \(x_{6}\) & \(x_{11}\) & \(x_{10}\)\\
+ \hline
+\end{tabular}
+\\
+Konacni put koji je isti(ocekivano) kao i u prethodnom zadatku: \(\(x_{11}\) \rightarrow \(x_{4}\) \rightarrow \(x_{1}\) \rightarrow \(x_{2}\) \rightarrow \(x_{5}\)\)
+
+\newpage
+\item Primjenom Bellman-Fordovog algoritma, pronaðite najduži put od izvora do ponora grafa.
+\\
+Prvo je potrebno negirati sve tezine u grafu. Dobijemo:
+\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+\(x_{10}\) & - & - & - & - & - & - & -27 & - & - & - & -11\\
+ \hline
+\(x_{11}\) & - & - & - & - & -40 & -33 & - & - & - & -38 & -\\
+ \hline
+\(x_{1}\) & -18 & - & - & -25 & - & - & - & - & - & - & -\\
+ \hline
+\(x_{2}\) & -7 & - & - & - & - & - & -17 & - & - & - & -\\
+ \hline
+\(x_{3}\) & - & - & - & - & - & -33 & - & - & - & -16 & -\\
+ \hline
+\(x_{4}\) & - & - & -5 & - & - & - & - & -8 & - & - & -\\
+ \hline
+\(x_{5}\) & - & - & - & - & - & - & - & - & - & - & -\\
+ \hline
+\(x_{6}\) & - & - & -21 & - & - & - & - & - & -5 & - & -\\
+ \hline
+\(x_{7}\) & -34 & - & - & - & - & - & - & - & - & - & -26\\
+ \hline
+\(x_{8}\) & - & - & - & - & - & - & - & -24 & -10 & - & -\\
+ \hline
+\(x_{9}\) & - & - & - & - & - & - & -26 & - & - & - & -\\
+ \hline
+\end{tabular}
+\\
+\\
+\\
+Nakon toga vrsimo 'normalni' Bellman-Fordov algoritam:
+\\
+\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Inicijalno stanje:  & \(\infty\) & 0 & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\) & \(\infty\)\\
+ \hline
+Iteracija 1 & -101 & 0 & -83 & 1073741798 & -40 & -73 & 1073741762 & -81 & -86 & -56 & -112\\
+ \hline
+Iteracija 2 & -120 & 0 & -102 & -108 & -40 & -73 & -147 & -81 & -86 & -56 & -131\\
+ \hline
+Iteracija 3 & -134 & 0 & -102 & -127 & -40 & -73 & -157 & -81 & -86 & -56 & -131\\
+ \hline
+Iteracija 4 & -134 & 0 & -102 & -127 & -40 & -73 & -161 & -81 & -86 & -56 & -145\\
+ \hline
+Iteracija 5 & -134 & 0 & -102 & -127 & -40 & -73 & -171 & -81 & -86 & -56 & -145\\
+ \hline
+Iteracija 6 & -134 & 0 & -102 & -127 & -40 & -73 & -171 & -81 & -86 & -56 & -145\\
+ \hline
+\end{tabular}
+\\
+\\
+\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+ \hline
+Inicijalno stanje:  & \(x_{10}\) & \(x_{11}\) & \(x_{1}\) & \(x_{2}\) & \(x_{3}\) & \(x_{4}\) & \(x_{5}\) & \(x_{6}\) & \(x_{7}\) & \(x_{8}\) & \(x_{9}\)\\
+ \hline
+Iteracija 1 & \(x_{1}\) & \(x_{11}\) & \(x_{6}\) & \(x_{1}\) & \(x_{11}\) & \(x_{3}\) & \(x_{10}\) & \(x_{4}\) & \(x_{6}\) & \(x_{3}\) & \(x_{10}\)\\
+ \hline
+Iteracija 2 & \(x_{7}\) & \(x_{11}\) & \(x_{6}\) & \(x_{1}\) & \(x_{11}\) & \(x_{3}\) & \(x_{10}\) & \(x_{4}\) & \(x_{6}\) & \(x_{3}\) & \(x_{10}\)\\
+ \hline
+Iteracija 3 & \(x_{2}\) & \(x_{11}\) & \(x_{6}\) & \(x_{1}\) & \(x_{11}\) & \(x_{3}\) & \(x_{9}\) & \(x_{4}\) & \(x_{6}\) & \(x_{3}\) & \(x_{10}\)\\
+ \hline
+Iteracija 4 & \(x_{2}\) & \(x_{11}\) & \(x_{6}\) & \(x_{1}\) & \(x_{11}\) & \(x_{3}\) & \(x_{10}\) & \(x_{4}\) & \(x_{6}\) & \(x_{3}\) & \(x_{10}\)\\
+ \hline
+Iteracija 5 & \(x_{2}\) & \(x_{11}\) & \(x_{6}\) & \(x_{1}\) & \(x_{11}\) & \(x_{3}\) & \(x_{9}\) & \(x_{4}\) & \(x_{6}\) & \(x_{3}\) & \(x_{10}\)\\
+ \hline
+Iteracija 6 & \(x_{2}\) & \(x_{11}\) & \(x_{6}\) & \(x_{1}\) & \(x_{11}\) & \(x_{3}\) & \(x_{9}\) & \(x_{4}\) & \(x_{6}\) & \(x_{3}\) & \(x_{10}\)\\
+ \hline
+\end{tabular}
+\\
+\\
+Konacno rjesenje:
+\(x_{11}\) \rightarrow \(x_{3}\) \rightarrow \(x_{4}\) \rightarrow \(x_{6}\) \rightarrow \(x_{1}\) \rightarrow \(x_{2}\) \rightarrow \(x_{10}\) \rightarrow \(x_{9}\) \rightarrow \(x_{5}\)
+a duzina je 171.
+
+\end{enumerate}
+
+\newpage
+
+\section*{Zadatak 6}
+
+Dat je graf \(G\) koji se moze opisati matricom susjedstva ispod:
+
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(K\) & \(R1\) & \(R2\) & \(R3\) & \(R4\) & \(R5\) & \(R6\) & \(R7\) & \(R8\) & \(S1\) & \(S2\) & \(S3\)\\
+ \hline
+ \hline
+\(K\) & - & - & - & - & - & - & - & - & - & - & - & -\\
+ \hline
+\(R1\) & - & - & - & - & - & - & 30 & 60 & - & - & - & -\\
+ \hline
+\(R2\) & - & 110 & - & 60 & - & - & - & - & - & - & - & -\\
+ \hline
+\(R3\) & - & - & - & - & - & - & 50 & 70 & - & - & - & -\\
+ \hline
+\(R4\) & 140 & - & - & - & - & - & - & - & - & - & - & -\\
+ \hline
+\(R5\) & - & - & - & - & 110 & - & - & 60 & - & - & - & -\\
+ \hline
+\(R6\) & 90 & - & - & - & - & - & - & - & - & - & - & -\\
+ \hline
+\(R7\) & 150 & - & - & - & - & - & - & - & - & - & - & -\\
+ \hline
+\(R8\) & - & - & - & - & - & 100 & - & - & - & - & - & -\\
+ \hline
+\(S1\) & - & - & - & - & - & - & - & - & 40 & - & - & -\\
+ \hline
+\(S2\) & - & 150 & - & - & - & - & - & - & 100 & - & - & -\\
+ \hline
+\(S3\) & - & 60 & 150 & - & - & - & - & - & - & - & - & -\\
+ \hline
+\end{tabular}
+\\
+\\
+Ford-Folkuersonov algoritam primjenjen nad ovim grafom glasi:
+\\
+\\
+\begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(K\) & \(R1\) & \(R2\) & \(R3\) & \(R4\) & \(R5\) & \(R6\) & \(R7\) & \(R8\) & \(S1\) & \(S2\) & \(S3\)\\
+ \hline
+ \hline
+Iteracija 1 &  &  &  &  &  &  &  &  &  &  &  & \\
+ \hline
+\(K\) & 0 & 0 & 0 & 0 & 0 & 0 & 30 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 60 & 0 & 0 & 0 & 30\\
+ \hline
+\(R2\) & 0 & 110 & 0 & 60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R3\) & 0 & 0 & 0 & 0 & 0 & 0 & 50 & 70 & 0 & 0 & 0 & 0\\
+ \hline
+\(R4\) & 140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R5\) & 0 & 0 & 0 & 0 & 110 & 0 & 0 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R6\) & 60 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R7\) & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R8\) & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(S1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 40 & 0 & 0 & 0\\
+ \hline
+\(S2\) & 0 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0\\
+ \hline
+\(S3\) & 0 & 30 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+Iteracija 2 &  &  &  &  &  &  &  &  &  &  &  & \\
+ \hline
+\(K\) & 0 & 0 & 0 & 0 & 0 & 0 & 30 & 30 & 0 & 0 & 0 & 0\\
+ \hline
+\(R1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 30 & 0 & 0 & 0 & 60\\
+ \hline
+\(R2\) & 0 & 110 & 0 & 60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R3\) & 0 & 0 & 0 & 0 & 0 & 0 & 50 & 70 & 0 & 0 & 0 & 0\\
+ \hline
+\(R4\) & 140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R5\) & 0 & 0 & 0 & 0 & 110 & 0 & 0 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R6\) & 60 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R7\) & 120 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R8\) & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(S1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 40 & 0 & 0 & 0\\
+ \hline
+\(S2\) & 0 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0\\
+ \hline
+\(S3\) & 0 & 0 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+Iteracija 3 &  &  &  &  &  &  &  &  &  &  &  & \\
+ \hline
+\(K\) & 0 & 0 & 0 & 0 & 0 & 0 & 30 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R1\) & 0 & 0 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 60\\
+ \hline
+\(R2\) & 0 & 80 & 0 & 60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 30\\
+ \hline
+\(R3\) & 0 & 0 & 0 & 0 & 0 & 0 & 50 & 70 & 0 & 0 & 0 & 0\\
+ \hline
+\(R4\) & 140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R5\) & 0 & 0 & 0 & 0 & 110 & 0 & 0 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R6\) & 60 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R7\) & 90 & 60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R8\) & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(S1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 40 & 0 & 0 & 0\\
+ \hline
+\(S2\) & 0 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0\\
+ \hline
+\(S3\) & 0 & 0 & 120 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+ \end{tabular}
+ 
+ \newpage
+ 
+ \begin{tabular}{ | c || c  | c | c | c | c | c | c | c | c | c | c | c | }
+\hline
+ & \(K\) & \(R1\) & \(R2\) & \(R3\) & \(R4\) & \(R5\) & \(R6\) & \(R7\) & \(R8\) & \(S1\) & \(S2\) & \(S3\)\\
+ \hline
+ \hline
+Iteracija 4 &  &  &  &  &  &  &  &  &  &  &  & \\
+ \hline
+\(K\) & 0 & 0 & 0 & 0 & 0 & 0 & 80 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R1\) & 0 & 0 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 60\\
+ \hline
+\(R2\) & 0 & 80 & 0 & 10 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 80\\
+ \hline
+\(R3\) & 0 & 0 & 50 & 0 & 0 & 0 & 0 & 70 & 0 & 0 & 0 & 0\\
+ \hline
+\(R4\) & 140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R5\) & 0 & 0 & 0 & 0 & 110 & 0 & 0 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R6\) & 10 & 30 & 0 & 50 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R7\) & 90 & 60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R8\) & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(S1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 40 & 0 & 0 & 0\\
+ \hline
+\(S2\) & 0 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0\\
+ \hline
+\(S3\) & 0 & 0 & 70 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+Iteracija 5 &  &  &  &  &  &  &  &  &  &  &  & \\
+ \hline
+\(K\) & 0 & 0 & 0 & 0 & 0 & 0 & 80 & 70 & 0 & 0 & 0 & 0\\
+ \hline
+\(R1\) & 0 & 0 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 60\\
+ \hline
+\(R2\) & 0 & 80 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 90\\
+ \hline
+\(R3\) & 0 & 0 & 60 & 0 & 0 & 0 & 0 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R4\) & 140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R5\) & 0 & 0 & 0 & 0 & 110 & 0 & 0 & 60 & 0 & 0 & 0 & 0\\
+ \hline
+\(R6\) & 10 & 30 & 0 & 50 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R7\) & 80 & 60 & 0 & 10 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(R8\) & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\(S1\) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 40 & 0 & 0 & 0\\
+ \hline
+\(S2\) & 0 & 150 & 0 & 0 & 0 & 0 & 0 & 0 & 100 & 0 & 0 & 0\\
+ \hline
+\(S3\) & 0 & 0 & 60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+ \hline
+\end{tabular}
+
+\end{document}
+
+

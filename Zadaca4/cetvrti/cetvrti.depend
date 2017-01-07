@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1483470510 source:c:\users\elvircrn\documents\codes2\dm\zadaca4\cetvrti\main.cpp
+	<iostream>
+	<cstdio>
+	<cctype>
+	<cstdlib>
+	<algorithm>
+	<set>
+	<map>
+	<set>
+	<vector>
+	<limits>
+	<sstream>
+
