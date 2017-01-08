@@ -473,7 +473,7 @@ public:
             auto help = s.begin()->second;
             s.erase(s.begin());
 
-            rowNames.push_back("Trenutni cvor: " + help);
+            rowNames.push_back(help);
 
             if (help == end)
                 break;
@@ -493,7 +493,7 @@ public:
 
             for (auto& x : v)
                 if (d[x] != std::numeric_limits<int>::max())
-                    mat.back().push_back(patch::ToString(d[x]));
+                    mat.back().push_back(patch::ToString(d[x]) + "/ " + patch::ToString(parent[x]));
                 else
                     mat.back().push_back("\\infty");
         }
@@ -581,7 +581,7 @@ public:
 
 
 template<class T>
-class BellmanFordSolver 
+class BellmanFordSolver
 {
 private:
     std::map<T, int> d;
@@ -732,9 +732,9 @@ int main()
             end = x;
     }
 
-    //(DijkstraSolver<std::string>(g, start, end)).Draw("");
+    (DijkstraSolver<std::string>(g, start, end)).Draw("");
     //BellmanFordSolver<std::string>(g, start, end).Draw("");
-    BellmanFordSolver<std::string>(g, start, end, true).Draw("");
+    //BellmanFordSolver<std::string>(g, start, end, true).Draw("");
 
     return 0;
 }
