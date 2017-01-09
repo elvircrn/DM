@@ -296,20 +296,25 @@ public:
         }
     }
 
-    DijkstraSolver(const Graph<T> &_g) : g(_g)
+    DijkstraSolver(const Graph<T> &_g, bool drawPath = false) : g(_g)
     {
         auto v = g.GetVertices();
         auto e = g.GetEdges();
 
         std::map<T, std::map<T, int>> d;
 
-        for (auto& x : v)
-            for (auto& y : v)
-                d[x][y] = std::numeric_limits<int>::max();
+        std::map<T, std::map<T, T>> parent;
 
         for (auto& x : v)
         {
-            d[x][x] = 0;
+            for (auto& y : v)
+            {
+                parent[x][y] = y;
+                if (x != y)
+                    d[x][y] = std::numeric_limits<int>::max();
+                else
+                    d[x][y] = 0;
+            }
         }
 
         for (auto& start : v)
@@ -326,9 +331,34 @@ public:
                     {
                         s.erase({ d[start][next.v], next.v });
                         d[start][next.v] = next.w + d[start][help];
-                        d[next.v][start] = d[start][next.v];
+                        //d[next.v][start] = d[start][next.v];
                         s.insert({ next.w + d[start][help], next.v });
+                        parent[start][next.v] = help;
+                        //parent[next.v][help] = next.v;
                     }
+                }
+            }
+
+            for (auto& dest : v)
+            {
+                if (start != dest)
+                {
+                    std::cout << "Put izmedju " << start << " i " << dest << ":\n";
+                    T node = dest;
+
+                    std::cout << "\\[\n";
+
+                    std::vector<T> path;
+                    while (node != start)
+                    {
+                        path.push_back(node);
+                        node = parent[start][node];
+                    }
+
+                    path.push_back(start);
+                    std::reverse(path.begin(), path.end());
+                    DrawVector(path, " \\rightarrow ");
+                    std::cout << "\n\\]\n";
                 }
             }
         }
@@ -404,7 +434,7 @@ int main()
 
     g.DrawGraphTable();
 
-    (DijkstraSolver<std::string>(g)).Draw("");
+    (DijkstraSolver<std::string>(g, true)).Draw("");
 
     return 0;
 }
